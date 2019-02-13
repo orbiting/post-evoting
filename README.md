@@ -18,6 +18,7 @@ The [Swiss Post](https://www.post.ch/en/business/a-z-of-subjects/industry-soluti
  1. `git clone https://gitlab.com/swisspost/evoting-solution.git`
  1. `git clone https://github.com/orbiting/post-evoting`
  1. `cd evoting-solution && git apply ../post-evoting/getting-started.patch`
+ 1. Follow the instructions in the patched `evoting-solution/README.md`
 
 ## Environment
 The evoting platform requires several external services to be provided, see page 48 of the [Software Architecture](https://gitlab.com/swisspost/evoting-solution/blob/43da689fc60a3ef471d3bc41f26746a76d6aa93d/documentation/Scytl_sVote_Software_Architecture.pdf). Follow the steps to start an Oracle DB, RabbitMQ and OrientDB as docker containers.
