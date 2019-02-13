@@ -9,5 +9,14 @@ services:
     ports:
       - 1521:1521
       - 5500:5500
+  rabbitmq:
+    image: rabbitmq:3-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbitmq
+      - RABBITMQ_DEFAULT_PASS=rabbitmq
+    volumes:
+      - ./docker-data/rabbitmq:/var/lib/rabbitmq
+    ports:
+      - 5672:5672
 
 
