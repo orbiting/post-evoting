@@ -223,7 +223,7 @@ index fbf5f94..3ff6675 100644
          <dependency>
              <groupId>com.scytl.products.ov.keystore</groupId>
 diff --git a/source-code/online-voting-channel/ov-control-components/control-components-commons/pom.xml b/source-code/online-voting-channel/ov-control-components/control-components-commons/pom.xml
-index 878966a..46e8310 100644
+index 878966a..d681dae 100644
 --- a/source-code/online-voting-channel/ov-control-components/control-components-commons/pom.xml
 +++ b/source-code/online-voting-channel/ov-control-components/control-components-commons/pom.xml
 @@ -110,8 +110,9 @@
@@ -233,7 +233,7 @@ index 878966a..46e8310 100644
 -            <groupId>com.oracle</groupId>
 +            <groupId>com.oracle.jdbc</groupId>
              <artifactId>ojdbc8</artifactId>
-+            <version>18.3.0.0</version>
++            <version>${oracle-driver.version}</version>
          </dependency>
          <dependency>
            <groupId>com.zaxxer</groupId>
@@ -321,14 +321,15 @@ index 9154a5e..343a868 100644
          <jsr305.version>3.0.2</jsr305.version>
      <qpid.version>7.1.0</qpid.version>
 diff --git a/source-code/online-voting-mixing/pom.xml b/source-code/online-voting-mixing/pom.xml
-index d589a50..80a5122 100644
+index d589a50..fb4632e 100644
 --- a/source-code/online-voting-mixing/pom.xml
 +++ b/source-code/online-voting-mixing/pom.xml
-@@ -256,7 +256,6 @@
+@@ -256,7 +256,7 @@
          <module>mixing-prover</module>
  		<module>mixing-core</module>
  		<module>mixnet-spring</module>
 -		<module>mixnet-tools</module>
++		<!-- <module>mixnet-tools</module> This module is missing -->
  	</modules>
  
  	<build>
@@ -456,25 +457,6 @@ index 67e0d4b..0000000
 @@ -1 +0,0 @@
 -registry=https://nexus.scytl.net/content/groups/public-npm/
 \ No newline at end of file
-diff --git a/source-code/scytl-cryptolib/cryptolib-primitives/pom.xml b/source-code/scytl-cryptolib/cryptolib-primitives/pom.xml
-index 2827abc..d91564e 100644
---- a/source-code/scytl-cryptolib/cryptolib-primitives/pom.xml
-+++ b/source-code/scytl-cryptolib/cryptolib-primitives/pom.xml
-@@ -13,12 +13,12 @@
-     <description>Provides basic cryptographic primitives</description>
-     <dependencies>
-         <dependency>
--            <artifactId>cryptolib-commons</artifactId>
-+            <artifactId>cryptolib-api-primitives</artifactId>
-             <groupId>com.scytl.cryptolib</groupId>
-             <version>${project.version}</version>
-         </dependency>
-         <dependency>
--            <artifactId>cryptolib-api-primitives</artifactId>
-+            <artifactId>cryptolib-commons</artifactId>
-             <groupId>com.scytl.cryptolib</groupId>
-             <version>${project.version}</version>
-         </dependency>
 diff --git a/source-code/scytl-cryptolib/pom.xml b/source-code/scytl-cryptolib/pom.xml
 index 01b7736..dd2141d 100644
 --- a/source-code/scytl-cryptolib/pom.xml
