@@ -1,0 +1,14 @@
+version: "3.4"
+services:
+  oracle:
+    image: store/oracle/database-enterprise:12.2.0.1
+    environment:
+      - ORACLE_PWD=oracle
+    volumes:
+      - ./docker-data/oracle:/opt/oracle/oradata
+    ports:
+      - 1521:1521
+      - 8080:8080
+      - 5500:5500
+
+

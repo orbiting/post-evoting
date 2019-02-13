@@ -14,11 +14,19 @@ The [Swiss Post](https://www.post.ch/en/business/a-z-of-subjects/industry-soluti
 ## Getting started
 
  1. Read the [intro](https://www.post.ch/en/business/a-z-of-subjects/industry-solutions/swiss-post-e-voting/e-voting-source-code)
- 1. [Register](https://www.evoting.ch/sourcecode/ui/home?lang=en) to gain access to the source private repository
- 1. `git clone https://gitlab.com/swisspost/evoting-solution.git`
- 1. `git clone https://github.com/orbiting/post-evoting`
- 1. `cd evoting-solution && git apply ../post-evoting/getting-started.patch`
- 
+ 2. [Register](https://www.evoting.ch/sourcecode/ui/home?lang=en) to gain access to the source private repository
+ 3. `git clone https://gitlab.com/swisspost/evoting-solution.git`
+ 4. `git clone https://github.com/orbiting/post-evoting`
+ 5. `cd evoting-solution && git apply ../post-evoting/getting-started.patch`
+
+## Environment
+The evoting platform requires several external services to be provided, see page 48 of the [Software Architecture](https://gitlab.com/swisspost/evoting-solution/blob/43da689fc60a3ef471d3bc41f26746a76d6aa93d/documentation/Scytl_sVote_Software_Architecture.pdf). Follow the steps to start an Oracle DB, RabbitMQ, AMQP, etc. in docker.
+
+1. Go to https://hub.docker.com/_/oracle-database-enterprise-edition and proced to checkout. This is the easiest way to get an Oracle Database.
+2. `cd docker`
+3. `docker login`
+4. `docker-compose up -d`
+
 ## Contributing
 
 Pull requests to facilitate the build and deployment process are welcome!
