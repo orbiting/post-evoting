@@ -1,0 +1,32 @@
+version: "3.4"
+services:
+  oracle:
+    image: store/oracle/database-enterprise:12.2.0.1
+    environment:
+      - ORACLE_PWD=oracle
+    volumes:
+      - ./docker-data/oracle:/opt/oracle/oradata
+    ports:
+      - 1521:1521
+      - 5500:5500
+
+  rabbitmq:
+    image: rabbitmq:3-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbitmq
+      - RABBITMQ_DEFAULT_PASS=rabbitmq
+    volumes:
+      - ./docker-data/rabbitmq:/var/lib/rabbitmq
+    ports:
+      - 5672:5672
+
+  orientdb:
+    image: orientdb:latest
+    environment:
+      - ORIENTDB_ROOT_PASSWORD=orientdb
+    volumes:
+      - ./docker-data/orientdb/databases:/orientdb/databases
+      - ./docker-data/orientdb/backups:/orientdb/backups
+    ports:
+      - 2424:2424
+      - 2480:2480

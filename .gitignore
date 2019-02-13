@@ -1,0 +1,14 @@
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Mapped Docker Volumes
+docker-data/
+
+# dotenv environment variables file
+*.env
+
+# macOS crap
+.DS_Store
