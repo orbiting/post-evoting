@@ -8,7 +8,6 @@ services:
       - ./docker-data/oracle:/opt/oracle/oradata
     ports:
       - 1521:1521
-      - 8080:8080
       - 5500:5500
 
 
