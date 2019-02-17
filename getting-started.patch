@@ -38,16 +38,16 @@ index 4e1caf1..670958a 100644
 +		    <password>PASSWORD</password>
 +			  <configuration>
 +			    <basicAuthScope>
-+			      <host>ANY </host>
-+			      <port>ANY </port>
-+			      <realm>OAM 11g </realm>
++			      <host>ANY</host>
++			      <port>ANY</port>
++			      <realm>OAM 11g</realm>
 +			    </basicAuthScope>
 +			    <httpConfiguration>
 +			      <all>
 +			      <params>
 +			        <property>
-+			          <name>http.protocol.allow-circular-redirects </name>
-+			          <value>%b,true </value>
++			          <name>http.protocol.allow-circular-redirects</name>
++			          <value>%b,true</value>
 +			        </property>
 +			      </params>
 +			      </all>
@@ -69,7 +69,7 @@ index 0000000..9b1d023
 +++ b/build.sh
 @@ -0,0 +1,39 @@
 +# Maven shortcuts
-+MVN="mvn clean install -ff"
++MVN="mvn clean install -ff -Dmaven.test.failure.ignore=true"
 +MVN_FILE="mvn install:install-file"
 +
 +# cleanup npm
@@ -81,6 +81,8 @@ index 0000000..9b1d023
 +$MVN_FILE -DgroupId=com.scytl.products.ov.keystore -DartifactId=ov-keystore -Dversion=1.3.0 -Dpackaging=test-jar -Dclassifier=tests -Dfile=ov-keystore-1.3.0-tests.jar  
 +$MVN_FILE -DgroupId=jakarta -DartifactId=jakarta-oro -Dversion=2.0.6-local -Dpackaging=jar -Dfile=jakarta-oro-2.0.6-local.jar 
 +$MVN_FILE -DgroupId=org.beanshell -DartifactId=bsh-core -Dversion=2.0b6 -Dpackaging=jar -Dfile=bsh-core-2.0b6.jar
++$MVN_FILE -DgroupId=com.scytl.shares -DartifactId=shares -Dversion=1.0.2 -Dpackaging=jar -Dfile=shares-1.0.2.jar
++$MVN_FILE -DgroupId=iaik -DartifactId=iaikPkcs11Wrapper -Dversion=1.4 -Dpackaging=jar -Dfile=iaikPkcs11Wrapper-1.4.jar
 +
 +# TODO: Build `math` modules from source
 +$MVN_FILE -DgroupId=com.scytl.math -DartifactId=scytl-math -Dversion=1.0.1 -Dpackaging=jar -Dfile=scytl-math-1.0.1.jar # TODO: Build `math` modules from source
@@ -460,51 +462,6 @@ index 67e0d4b..0000000
 @@ -1 +0,0 @@
 -registry=https://nexus.scytl.net/content/groups/public-npm/
 \ No newline at end of file
-diff --git a/source-code/scytl-cryptolib/pom.xml b/source-code/scytl-cryptolib/pom.xml
-index 01b7736..dd2141d 100644
---- a/source-code/scytl-cryptolib/pom.xml
-+++ b/source-code/scytl-cryptolib/pom.xml
-@@ -163,23 +163,23 @@
-                 <module>cryptolib-digital-envelope</module>
-                 <module>cryptolib-default-policies</module>
-                 <module>cryptolib-test-tools</module>
--                <module>cryptolib-js</module>
--                <module>cryptolib-interoperation</module>
--                <module>cryptolib-js-buildtools</module>
--                <module>cryptolib-js-bitwise</module>
--                <module>cryptolib-js-codec</module>
--                <module>cryptolib-js-policy</module>
--                <module>cryptolib-js-securerandom</module>
--                <module>cryptolib-js-messagedigest</module>
--                <module>cryptolib-js-pbkdf</module>
--                <module>cryptolib-js-symmetric</module>
--                <module>cryptolib-js-asymmetric</module>
--                <module>cryptolib-js-certificate</module>
--                <module>cryptolib-js-digitalenvelope</module>
--                <module>cryptolib-js-mathematical</module>
--                <module>cryptolib-js-elgamal</module>
--                <module>cryptolib-js-keystore</module>
--                <module>cryptolib-js-zkproof</module>
-+                <!--<module>cryptolib-js</module>-->
-+                <!--<module>cryptolib-interoperation</module>-->
-+                <!--<module>cryptolib-js-buildtools</module>-->
-+                <!--<module>cryptolib-js-bitwise</module>-->
-+                <!--<module>cryptolib-js-codec</module>-->
-+                <!--<module>cryptolib-js-policy</module>-->
-+                <!--<module>cryptolib-js-securerandom</module>-->
-+                <!--<module>cryptolib-js-messagedigest</module>-->
-+                <!--<module>cryptolib-js-pbkdf</module>-->
-+                <!--<module>cryptolib-js-symmetric</module>-->
-+                <!--<module>cryptolib-js-asymmetric</module>-->
-+                <!--<module>cryptolib-js-certificate</module>-->
-+                <!--<module>cryptolib-js-digitalenvelope</module>-->
-+                <!--<module>cryptolib-js-mathematical</module>-->
-+                <!--<module>cryptolib-js-elgamal</module>-->
-+                <!--<module>cryptolib-js-keystore</module>-->
-+                <!--<module>cryptolib-js-zkproof</module>-->
-             </modules>
-         </profile>
-         <profile>
 diff --git a/source-code/scytl-secure-logger/pom.xml b/source-code/scytl-secure-logger/pom.xml
 index 078cf29..4f19d38 100644
 --- a/source-code/scytl-secure-logger/pom.xml
