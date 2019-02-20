@@ -462,6 +462,36 @@ index 67e0d4b..0000000
 @@ -1 +0,0 @@
 -registry=https://nexus.scytl.net/content/groups/public-npm/
 \ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-bitwise/package.json b/source-code/scytl-cryptolib/cryptolib-js-bitwise/package.json
+index f527ce0..2dab85a 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-bitwise/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-bitwise/package.json
+@@ -43,5 +43,13 @@
+   "private": true,
+   "publishConfig": {
+     "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++  },
++  "jshintConfig": {
++    "undef": true,
++    "unused": false,
++    "globals": {
++      "beforeAll": true,
++      "expect": true
++    }
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/pom.xml b/source-code/scytl-cryptolib/pom.xml
+index 01b7736..213ccb0 100644
+--- a/source-code/scytl-cryptolib/pom.xml
++++ b/source-code/scytl-cryptolib/pom.xml
+@@ -287,6 +288,7 @@
+                         <exclude>node_modules/**</exclude>
+                         <exclude>release/**</exclude>
+                     </excludes>
++					<skip>maven.test.failure.ignore</skip>
+                     <properties>
+                         <currentYear>2018</currentYear>
+                     </properties>
 diff --git a/source-code/scytl-secure-logger/pom.xml b/source-code/scytl-secure-logger/pom.xml
 index 078cf29..4f19d38 100644
 --- a/source-code/scytl-secure-logger/pom.xml
