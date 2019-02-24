@@ -17,7 +17,8 @@ The [Swiss Post](https://www.post.ch/en/business/a-z-of-subjects/industry-soluti
  1. [Register](https://www.evoting.ch/sourcecode/ui/home?lang=en) to gain access to the private repository
  1. `git clone https://gitlab.com/swisspost/evoting-solution.git`
  1. `git clone https://github.com/orbiting/post-evoting`
- 1. `cd evoting-solution && git apply ../post-evoting/getting-started.patch`
+ 1. `cd evoting-solution`
+ 1. `git apply --ignore-whitespace ../post-evoting/post-33a04616.patch`
  1. Follow the instructions in the patched `evoting-solution/README.md`
 
 ## Environment
