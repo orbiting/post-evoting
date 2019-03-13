@@ -1,0 +1,3345 @@
+diff --git a/README.md b/README.md
+index 4e1caf1..581c53b 100644
+--- a/README.md
++++ b/README.md
+@@ -8,4 +8,135 @@ At this stage, we would like to highlight the key points in the terms of use:
+ *  All feedback regarding vulnerabilities found in the electronic voting solution source code is welcome. All feedback must be reported on the GitLab.com platform as an issue and set to “confidential”. Swiss Post will incorporate the reported vulnerabilities into the development of the system.
+ 
+ 
+-Please refer to the [Wiki](https://gitlab.com/swisspost/evoting-solution/wikis/home) for complementary information as well as a presentation of the published Source Code
+\ No newline at end of file
++Please refer to the [Wiki](https://gitlab.com/swisspost/evoting-solution/wikis/home) for complementary information as well as a presentation of the published Source Code
++
++## Getting started
++
++What works:
++
++ * Building most sources
++
++What doesn’t:
++
++ * Building native libraries
++   * dependencies/scytl-math-native-1.0.1-amd64-Linux-gpp-jni.nar
++   * dependencies/scytl-math-native-1.0.1-amd64-Windows-gpp-jni.nar
++   * dependencies/scytl-gmp-6.1.1-amd64-Linux-gpp-shared.nar
++   * dependencies/scytl-gmp-6.1.1-amd64-Windows-gpp-shared.nar
++ * Missing 3rd party libraries
++   * safesign.com Safesign.exe 3.0.93
++   * safesign.com SafeSign-x64.exe 1.0
++   * ifdokccid.com ifdokccid.zip linux_i686 4.2.5
++   * ifdokccid.com ifdokccid.zip linux_x86_64 4.2.5
++ * Missing sources
++   * scytl.com cryptography 4.2.1
++   * scytl.com ov-keystore 1.3.0
++   * scytl.com shares 1.0.2
++   * oracle.com unlimited JCE policy 8
++ * Some static code analyzers
++ * Some dynamic tests
++ * Some docs & links
++
++### Requirements
++
++ * JDK 8
++ * Apache Maven 3
++ * Nodejs & npm
++ * Apache Ant
++ * gcc (for building nar only)
++
++### Configuration
++
++Edit `~/.m2/settings.xml` to authorize access to the [Oracle Maven repository](https://www.oracle.com/webfolder/application/maven/index.html) (get a license [here](https://www.oracle.com/webapps/maven/register/license.html)):
++
++	<settings>
++	  <servers>
++		  <server>
++		    <id>maven.oracle.com </id>
++		    <username>USERNAME</username>
++		    <password>PASSWORD</password>
++			  <configuration>
++			    <basicAuthScope>
++			      <host>ANY</host>
++			      <port>ANY</port>
++			      <realm>OAM 11g</realm>
++			    </basicAuthScope>
++			    <httpConfiguration>
++			      <all>
++			      <params>
++			        <property>
++			          <name>http.protocol.allow-circular-redirects</name>
++			          <value>%b,true</value>
++			        </property>
++			      </params>
++			      </all>
++			    </httpConfiguration>
++			  </configuration>
++		  </server>
++	  </servers>
++	</settings>
++
++Download following 3rd party libraries and save into folder `dependencies`. Names must match exactly.
++
++ * [tomcat win x86](https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32-windows-x86.zip) save as `apache-tomcat-8.5.32-windows-x86.zip`
++ * [tomcat win x64](https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32-windows-x64.zip) save as `apache-tomcat-8.5.32-windows-x64.zip`
++ * [tomcat generic](https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32.zip) save as `apache-tomcat-8.5.32.zip`
++ * [JCE unlimited](https://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip?AuthParam=1550954783_5f4c3d0fa26698a7f7c1a54256134f57) save as `UnlimitedJCEPolicy-8-empty.zip`
++
++### Run npm registry
++
++Execute these commands to prepare the build and launch a local npm registry for the build.
++
++	npm install --global npm-version
++	npm install --global gulp-cli
++	npm install --global raml2html
++	npm install --global verdaccio
++	verdaccio
++
++in `~/.config/verdaccio/config.yaml` edit line 35 to
++
++	publish: $all
++   
++Stop verdaccio (Ctrl+C) and relaunch for config changes to take effect. Register by choosing any user name, password and email, e.g. 
++
++	verdaccio &
++	npm adduser --registry http://localhost:4873
++	Username: republik
++	Password: scytl
++	Email: (this IS public) evoting@republik.ch
++
++	
++### Run build script
++
++This script installs local dependencies and builds the backend modules in order.
++To publish JS libraries to the local npm registry, use ´publish´. Provide the values given to `npm adduser` above. These are used to authenticate at the local npm registry.
++
++	sh ./build.sh publish
++	Username: republik
++	Password: scytl
++	Email: (this IS public) evoting@republik.ch
++
++The script may not proceed beyond following lines:
++
++	[18:15:11] Starting 'watch:js'...
++	[18:15:11] Finished 'watch:js' after 53 ms
++	[18:15:11] Finished 'dev' after 15 s
++
++In this case, type `Ctrl-C` to finish (generate client docs).
++
++### More info
++
++See README.md files in nested directores, local npm registry, REST service API docs for more information, e.g.
++
++ * [client API usage](source-code/online-voting-client-library/dist/doc/api-reference/index.html) available after successful build only
++ * [client APIs](source-code/online-voting-client-library/doc/api-guide.md)
++ * [online-voting-client-library](source-code/online-voting-client-library/readme.md)
++ * [secure data manager frontend](source-code/online-voting-secure-data-manager/secure-data-manager-frontend/README.md)
++ * [scytl-cryptolib](source-code/scytl-cryptolib/README.md)
++ * [cryptolib-js modules in npm registry](http://localhost:4873/) verdaccio must be running, available after successful build only
++ * [key translation API](source-code/online-voting-channel/ov-key-translation/kt-ws-rest/target/api.html) sorry, broken link
++
++See documentation provided in `documentation` folder
++
++ * [system documentation](documentation/eVoting_System_Dokumentation.pdf)
++ * [system architecture](documentation/Scytl_sVote_Software_Architecture.pdf)
++ * [protocol specifications](documentation/Scytl%20sVote%20Protocol%20Specifications.pdf)
++ * [complete verifiability formal proof report](documentation/Complete_Verifiability_Formal_Proof_Report.pdf)
++ * [complete verifiability security proof report](documentation/Complete_Verifiability_Security_Proof_Report.pdf)
++ * [privacy formal proof report](documentation/Privacy_Formal_Proof_Report.pdf)
++ * [privacy security proof report](documentation/Privacy_Security_Proof_Report.pdf)
++ * [audit of the process with control components](documentation/Scytl%20sVote%20Audit%20with%20Control%20Components.pdf)
++ 
+\ No newline at end of file
+diff --git a/build.sh b/build.sh
+new file mode 100644
+index 0000000..c5c4e73
+--- /dev/null
++++ b/build.sh
+@@ -0,0 +1,91 @@
++if [ "$1" = "publish" ]
++then
++# authenticate to local npm registry: provide user, pwd and email and hit enter
++  npm set registry http://localhost:4873
++  npm login --registry http://localhost:4873
++  action="$1"
++else
++  action="view"
++fi
++
++# Maven shortcuts
++MVN="mvn clean install -DskipTests=true"
++MVN_FILE="mvn install:install-file"
++
++# cleanup npm
++find . -type f -name package-lock.json -delete
++find . -type f -name .npmrc -delete
++
++# Install local dependencies
++cd dependencies
++$MVN_FILE -DgroupId=com.scytl.products.ov.keystore -DartifactId=ov-keystore -Dversion=1.3.0 -Dpackaging=jar -Dfile=ov-keystore-1.3.0.jar
++$MVN_FILE -DgroupId=com.scytl.products.ov.keystore -DartifactId=ov-keystore -Dversion=1.3.0 -Dpackaging=test-jar -Dclassifier=tests -Dfile=ov-keystore-1.3.0-tests.jar
++$MVN_FILE -DgroupId=jakarta -DartifactId=jakarta-oro -Dversion=2.0.6-local -Dpackaging=jar -Dfile=jakarta-oro-2.0.6-local.jar
++$MVN_FILE -DgroupId=org.beanshell -DartifactId=bsh-core -Dversion=2.0b6 -Dpackaging=jar -Dfile=bsh-core-2.0b6.jar
++$MVN_FILE -DgroupId=com.scytl.shares -DartifactId=shares -Dversion=1.0.2 -Dpackaging=jar -Dfile=shares-1.0.2.jar
++$MVN_FILE -DgroupId=iaik -DartifactId=iaikPkcs11Wrapper -Dversion=1.4 -Dpackaging=jar -Dfile=iaikPkcs11Wrapper-1.4.jar
++$MVN_FILE -DgroupId=com.scytl.jbasis -DartifactId=cryptography -Dversion=4.2.1 -Dpackaging=jar -Dfile=cryptography-4.2.1.jar
++$MVN_FILE -DgroupId=log4j -DartifactId=log4j -Dversion=1.3alpha-7-local -Dpackaging=jar -Dfile=log4j-1.3alpha-7-local.jar
++$MVN_FILE -DgroupId=org.apache.tomcat -DartifactId=apache-tomcat -Dversion=8.5.32 -Dpackaging=zip -Dfile=apache-tomcat-8.5.32.zip
++$MVN_FILE -DgroupId=org.apache.tomcat -DartifactId=apache-tomcat -Dversion=8.5.32-windows-x64 -Dpackaging=zip -Dfile=apache-tomcat-8.5.32-windows-x64.zip
++$MVN_FILE -DgroupId=org.apache.tomcat -DartifactId=apache-tomcat -Dversion=8.5.32-windows-x86 -Dpackaging=zip -Dfile=apache-tomcat-8.5.32-windows-x86.zip
++
++#TODO: Use real string crypto libraries
++$MVN_FILE -DgroupId=com.oracle  -DartifactId=UnlimitedJCEPolicy -Dversion=8 -Dpackaging=zip -Dfile=UnlimitedJCEPolicy-8-empty.zip
++
++# TODO: Build `math` modules from source
++$MVN_FILE -DgroupId=com.scytl.math -DartifactId=scytl-math -Dversion=1.0.1 -Dpackaging=jar -Dfile=scytl-math-1.0.1.jar # TODO: Build `math` modules from source
++$MVN_FILE -DgroupId=com.scytl.math -DartifactId=scytl-math-native -Dversion=1.0.1 -Dclassifier=amd64-Linux-gpp-jni -Dpackaging=nar -Dfile=scytl-math-native-1.0.1-amd64-Linux-gpp-jni.nar
++$MVN_FILE -DgroupId=com.scytl.math -DartifactId=scytl-math-native -Dversion=1.0.1 -Dclassifier=amd64-Windows-gpp-jni -Dpackaging=nar -Dfile=scytl-math-native-1.0.1-amd64-Windows-gpp-jni.nar
++$MVN_FILE -DgroupId=com.scytl.gmp -DartifactId=scytl-gmp -Dversion=6.1.1 -Dclassifier=amd64-Linux-gpp-shared -Dpackaging=nar -Dfile=scytl-gmp-6.1.1-amd64-Linux-gpp-shared.nar
++$MVN_FILE -DgroupId=com.scytl.gmp -DartifactId=scytl-gmp -Dversion=6.1.1 -Dclassifier=amd64-Windows-gpp-shared -Dpackaging=nar -Dfile=scytl-gmp-6.1.1-amd64-Windows-gpp-shared.nar
++
++# Build modules in the right order
++cd ../source-code
++cd maven-generic-conf
++$MVN
++
++cd ../scytl-cryptolib
++$MVN -Dnpm-publish-type=$action
++
++cd ../ov-maven-dependencies/
++$MVN
++
++cd ../scytl-secure-logger/
++$MVN
++
++cd ../online-voting-logging/
++$MVN
++
++cd ../online-voting-mixing/
++$MVN
++
++cd ../online-voting-channel
++$MVN
++
++cd ../online-voting-secure-data-manager
++$MVN
++
++cd ../online-voting-client-library
++npm install
++npm run dev
++#TODO: Fix 4 unit-test errors
++npm run build
++
++cd ../../
++# documentation
++#TODO: Fix REST services docs
++# mvn -Pgenerate-all-html-apis package -f -DskipTests source-code/online-voting-channel/ov-key-translation/kt-ws-rest/pom.xml
++# mvn -Pgenerate-all-html-apis package -f -DskipTests source-code/online-voting-channel/ov-voting-workflow/vw-ws-rest/pom.xml
++# mvn -Pgenerate-all-html-apis package -f -DskipTests source-code/online-voting-channel/ov-voter-material/vm-ws-rest/pom.xml
++# mvn -Pgenerate-all-html-apis package -f -DskipTests source-code/online-voting-channel/ov-vote-verification/vv-ws-rest/pom.xml
++# mvn -Pgenerate-all-html-apis package -f -DskipTests source-code/online-voting-channel/ov-extended-authentication/ea-ws-rest/pom.xml
++# mvn -Pgenerate-all-html-apis package -f -DskipTests source-code/online-voting-channel/ov-election-information/ei-ws-rest/pom.xml
++# mvn -Pgenerate-all-html-apis package -f -DskipTests source-code/online-voting-channel/ov-certificate-registry/cr-ws-rest/pom.xml
++# mvn -Pgenerate-all-html-apis package -f -DskipTests source-code/online-voting-channel/ov-authentication/au-ws-rest/pom.xml
++# mvn -Pgenerate-all-html-apis package -f -DskipTests source-code/online-voting-channel/ov-control-components/orchestrator/or-ws-rest/pom.xml
++# mvn -Pgenerate-all-html-apis package -f -DskipTests source-code/online-voting-channel/ov-voter-material/vm-ws-rest/pom.xml
++# mvn -Pgenerate-all-html-apis package -f -DskipTests source-code/online-voting-channel/ov-election-information/ei-ws-rest/pom.xml
++echo "for JS crypto docs see http://localhost:4873"
++echo "for API docs, see source-code/online-voting-client-library/doc/api-guide.md"
++echo "for API usage to authenticate, send vote and cast vote, see source-code/online-voting-client-library/dist/doc/api-reference/index.html"
+\ No newline at end of file
+diff --git a/source-code/maven-generic-conf/pom.xml b/source-code/maven-generic-conf/pom.xml
+index e2aeb13..95c7c79 100644
+--- a/source-code/maven-generic-conf/pom.xml
++++ b/source-code/maven-generic-conf/pom.xml
+@@ -24,8 +24,8 @@
+         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+         <build.version>${project.version} (${user.name} r${buildNumber} ${timestamp})</build.version>
+         <build.tag>${env.BUILD_TAG}</build.tag>
+-        <maven.compiler.source>1.5</maven.compiler.source>
+-        <maven.compiler.target>1.5</maven.compiler.target>
++        <maven.compiler.source>1.8</maven.compiler.source>
++        <maven.compiler.target>1.8</maven.compiler.target>
+         <sonar.java.source>${maven.compiler.source}</sonar.java.source>
+         <sonar.java.target>${maven.compiler.target}</sonar.java.target>
+         <targetJdk>${maven.compiler.target}</targetJdk>
+@@ -121,7 +121,7 @@
+                 <plugin>
+                     <groupId>org.codehaus.izpack</groupId>
+                     <artifactId>izpack-maven-plugin</artifactId>
+-                    <version>5.0.0-beta10</version>
++                    <version>5.0.6</version>
+                 </plugin>
+                 <plugin>
+                     <groupId>org.codehaus.mojo</groupId>
+@@ -451,74 +451,4 @@
+             </build>
+         </profile>
+     </profiles>
+-    <repositories>
+-        <repository>
+-            <id>central</id>
+-            <name>Scytl Repository</name>
+-            <url>https://nexus.scytl.net/content/groups/public</url>
+-            <releases>
+-                <enabled>true</enabled>
+-                <updatePolicy>never</updatePolicy>
+-                <checksumPolicy>warn</checksumPolicy>
+-            </releases>
+-            <snapshots>
+-                <enabled>true</enabled>
+-                <updatePolicy>always</updatePolicy>
+-                <checksumPolicy>warn</checksumPolicy>
+-            </snapshots>
+-        </repository>
+-        <repository>
+-            <id>snapshots</id>
+-            <name>Scytl Snapshots Repository</name>
+-            <url>https://nexus.scytl.net/content/repositories/snapshots</url>
+-            <releases>
+-                <enabled>false</enabled>
+-                <updatePolicy>never</updatePolicy>
+-                <checksumPolicy>warn</checksumPolicy>
+-            </releases>
+-            <snapshots>
+-                <enabled>true</enabled>
+-                <updatePolicy>always</updatePolicy>
+-                <checksumPolicy>warn</checksumPolicy>
+-            </snapshots>
+-        </repository>
+-    </repositories>
+-    <pluginRepositories>
+-        <pluginRepository>
+-            <id>central</id>
+-            <name>Scytl Plugin Repository</name>
+-            <url>https://nexus.scytl.net/content/groups/public</url>
+-            <releases>
+-                <enabled>true</enabled>
+-                <updatePolicy>never</updatePolicy>
+-                <checksumPolicy>warn</checksumPolicy>
+-            </releases>
+-            <snapshots>
+-                <enabled>true</enabled>
+-                <updatePolicy>always</updatePolicy>
+-                <checksumPolicy>warn</checksumPolicy>
+-            </snapshots>
+-        </pluginRepository>
+-    </pluginRepositories>
+-    <distributionManagement>
+-        <repository>
+-            <id>scytl-nexus</id>
+-            <name>Scytl Releases</name>
+-            <url>https://nexus.scytl.net/content/repositories/releases</url>
+-        </repository>
+-        <snapshotRepository>
+-            <id>scytl-nexus</id>
+-            <name>Scytl Snapshots</name>
+-            <url>https://nexus.scytl.net/content/repositories/snapshots</url>
+-            <!--<uniqueVersion>true</uniqueVersion>-->
+-        </snapshotRepository>
+-        <site>
+-            <id>1</id>
+-            <name>Scytl Distribution Repository</name>
+-            <url>dav:http://sauron.scytl.net/maven/reports/</url>
+-        </site>
+-    </distributionManagement>
+-    <prerequisites>
+-        <maven>3.0</maven>
+-    </prerequisites>
+ </project>
+diff --git a/source-code/online-voting-channel/ov-authentication/au-ws-rest/pom.xml b/source-code/online-voting-channel/ov-authentication/au-ws-rest/pom.xml
+index 65cbaf8..24179ac 100644
+--- a/source-code/online-voting-channel/ov-authentication/au-ws-rest/pom.xml
++++ b/source-code/online-voting-channel/ov-authentication/au-ws-rest/pom.xml
+@@ -83,7 +83,22 @@
+                 </exclusion>
+             </exclusions>
+         </dependency>
+-
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib-persistence</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
+     </dependencies>
+ 
+ 
+@@ -93,24 +108,6 @@
+     <!-- The profile below can be used if the HTML API files should be generated -->
+     <!-- It includes the installation of node, npm and raml2html -->
+     <profiles>
+-    
+-        <profile>
+-          <id>skipTestRun</id>
+-          <activation>
+-            <property>
+-              <name>skipTests</name>
+-              <value>!true</value>
+-            </property>
+-          </activation>
+-          <dependencies>
+-            <dependency>
+-                <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
+-                <artifactId>ov-commons-lib</artifactId>
+-                <type>test-jar</type>
+-                <scope>test</scope>
+-            </dependency>
+-          </dependencies>
+-        </profile>
+         <profile>
+             <id>generate-all-html-apis</id>
+             <build>
+diff --git a/source-code/online-voting-channel/ov-authentication/authentication-services/pom.xml b/source-code/online-voting-channel/ov-authentication/authentication-services/pom.xml
+index 2277b41..12f9a7b 100644
+--- a/source-code/online-voting-channel/ov-authentication/authentication-services/pom.xml
++++ b/source-code/online-voting-channel/ov-authentication/authentication-services/pom.xml
+@@ -52,31 +52,24 @@
+             <groupId>org.apache.commons</groupId>
+             <artifactId>commons-lang3</artifactId>
+         </dependency>
+-    </dependencies>
++
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib-persistence</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <scope>test</scope>
++            <type>test-jar</type>
++        </dependency>
++
++	</dependencies>
+     
+-    <profiles>
+-      <profile>
+-        <id>skipTestRun</id>
+-        <activation>
+-          <property>
+-            <name>skipTests</name>
+-            <value>!true</value>
+-          </property>
+-        </activation>
+-        <dependencies>
+-          <dependency>
+-              <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
+-              <artifactId>ov-commons-lib-persistence</artifactId>
+-              <type>test-jar</type>
+-              <scope>test</scope>
+-          </dependency>
+-          <dependency>
+-              <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
+-              <artifactId>ov-commons-lib</artifactId>
+-              <scope>test</scope>
+-              <type>test-jar</type>
+-          </dependency>
+-        </dependencies>
+-      </profile>
+-    </profiles>
+ </project>
+diff --git a/source-code/online-voting-channel/ov-certificate-registry/cr-ws-rest/pom.xml b/source-code/online-voting-channel/ov-certificate-registry/cr-ws-rest/pom.xml
+index 853a7d9..a8fbb4b 100644
+--- a/source-code/online-voting-channel/ov-certificate-registry/cr-ws-rest/pom.xml
++++ b/source-code/online-voting-channel/ov-certificate-registry/cr-ws-rest/pom.xml
+@@ -82,6 +82,22 @@
+ 			    </exclusion>
+ 		    </exclusions>
+ 		</dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib-persistence</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
+     </dependencies>
+ 
+     <build>
+@@ -91,24 +107,6 @@
+     <!-- The profile below can be used if the HTML API files should be generated -->
+     <!-- It includes the installation of node, npm and raml2html -->
+     <profiles>
+-        <profile>
+-          <id>skipTestRun</id>
+-          <activation>
+-            <property>
+-              <name>skipTests</name>
+-              <value>!true</value>
+-            </property>
+-          </activation>
+-          <dependencies>
+-            <dependency>
+-                <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
+-                <artifactId>ov-commons-lib</artifactId>
+-                <version>${project.version}</version>
+-                <type>test-jar</type>
+-                <scope>test</scope>
+-            </dependency>
+-          </dependencies>
+-        </profile>
+         <profile>
+             <id>generate-all-html-apis</id>
+             <build>
+diff --git a/source-code/online-voting-channel/ov-commons/ov-commons-beans/pom.xml b/source-code/online-voting-channel/ov-commons/ov-commons-beans/pom.xml
+index 9705b33..e3d4d92 100644
+--- a/source-code/online-voting-channel/ov-commons/ov-commons-beans/pom.xml
++++ b/source-code/online-voting-channel/ov-commons/ov-commons-beans/pom.xml
+@@ -65,5 +65,14 @@
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </dependency>
++	   
++        <!-- test dependencies -->
++        <dependency>
++            <groupId>junit</groupId>
++            <artifactId>junit</artifactId>
++            <version>${junit.version}</version>
++            <scope>test</scope>
++        </dependency>
++
+    </dependencies>
+ </project>
+diff --git a/source-code/online-voting-channel/ov-commons/ov-commons-sign/pom.xml b/source-code/online-voting-channel/ov-commons/ov-commons-sign/pom.xml
+index b44cb8b..ec33879 100644
+--- a/source-code/online-voting-channel/ov-commons/ov-commons-sign/pom.xml
++++ b/source-code/online-voting-channel/ov-commons/ov-commons-sign/pom.xml
+@@ -53,12 +53,6 @@
+             <groupId>commons-io</groupId>
+             <artifactId>commons-io</artifactId>
+         </dependency>
+-        <dependency>
+-            <groupId>com.scytl.products.ov.channel.commons</groupId>
+-            <artifactId>ov-commons-dto</artifactId>
+-            <version>${project.version}</version>
+-            <scope>test</scope>
+-        </dependency>
+         <dependency>
+             <!--
+               This dependency is declared as required by the CryptoLib but
+@@ -70,7 +64,31 @@
+             <version>${scytl-math.version}</version>
+             <scope>test</scope>
+         </dependency>
+-    </dependencies>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons</groupId>
++            <artifactId>ov-commons-dto</artifactId>
++            <version>${project.version}</version>
++        </dependency>
++
++        <!-- test dependencies -->
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons</groupId>
++            <artifactId>ov-commons-dto</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <scope>test</scope>
++            <type>test-jar</type>
++        </dependency>
++        <dependency>
++            <groupId>com.scytl.cryptolib</groupId>
++		    <artifactId>cryptolib-asymmetric</artifactId>
++            <version>${cryptolib.version}</version>
++            <classifier>tests</classifier>
++            <scope>test</scope>
++            <type>test-jar</type>
++        </dependency>
++
++	</dependencies>
+     
+     <build>
+         <plugins>
+diff --git a/source-code/online-voting-channel/ov-commons/pom.xml b/source-code/online-voting-channel/ov-commons/pom.xml
+index 9a0145d..f2b7873 100644
+--- a/source-code/online-voting-channel/ov-commons/pom.xml
++++ b/source-code/online-voting-channel/ov-commons/pom.xml
+@@ -140,13 +140,7 @@
+ 		<dependency>
+ 			<groupId>com.scytl.cryptolib</groupId>
+ 			<artifactId>cryptolib-commons</artifactId>
+-			<version>${cryptolib.version}</version>
+-			<exclusions>
+-				<exclusion>
+-					<groupId>com.fasterxml.jackson.core</groupId>
+-					<artifactId>jackson-databind</artifactId>
+-				</exclusion>
+-			</exclusions>
++			<version>2.1.54</version>
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>io.jsonwebtoken</groupId>
+diff --git a/source-code/online-voting-channel/ov-control-components/control-components-commons/pom.xml b/source-code/online-voting-channel/ov-control-components/control-components-commons/pom.xml
+index 878966a..40ae3fb 100644
+--- a/source-code/online-voting-channel/ov-control-components/control-components-commons/pom.xml
++++ b/source-code/online-voting-channel/ov-control-components/control-components-commons/pom.xml
+@@ -110,8 +110,9 @@
+             <artifactId>spring-boot</artifactId>
+         </dependency>
+         <dependency>
+-            <groupId>com.oracle</groupId>
++            <groupId>com.oracle.jdbc</groupId>
+             <artifactId>ojdbc8</artifactId>
++            <scope>provided</scope>
+         </dependency>
+         <dependency>
+           <groupId>com.zaxxer</groupId>
+diff --git a/source-code/online-voting-channel/ov-control-components/distributed-mixing/distributed-mixing-service/pom.xml b/source-code/online-voting-channel/ov-control-components/distributed-mixing/distributed-mixing-service/pom.xml
+index aa2da05..12b409d 100644
+--- a/source-code/online-voting-channel/ov-control-components/distributed-mixing/distributed-mixing-service/pom.xml
++++ b/source-code/online-voting-channel/ov-control-components/distributed-mixing/distributed-mixing-service/pom.xml
+@@ -9,7 +9,6 @@
+ 
+     <artifactId>distributed-mixing-service</artifactId>
+     <name>Online Voting - Distributed Mixing - Service</name>
+-
+     <dependencies>
+         <dependency>
+             <groupId>com.scytl.products.ov.channel.cc</groupId>
+@@ -98,6 +97,14 @@
+             <artifactId>mockito-core</artifactId>
+             <scope>test</scope>
+         </dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons</groupId>
++            <artifactId>ov-commons-sign</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
+     </dependencies>
+ 
+     <build>
+@@ -122,25 +129,4 @@
+         </plugins>
+     </build>
+ 
+-    <profiles>
+-        <profile>
+-            <id>skipTestRun</id>
+-            <activation>
+-                <property>
+-                    <name>skipTests</name>
+-                    <value>!true</value>
+-                </property>
+-            </activation>
+-            <dependencies>
+-                <dependency>
+-                    <groupId>com.scytl.products.ov.channel.commons</groupId>
+-                    <artifactId>ov-commons-sign</artifactId>
+-                    <type>test-jar</type>
+-                    <scope>test</scope>
+-                    <version>${project.version}</version>
+-                </dependency>
+-            </dependencies>
+-        </profile>
+-    </profiles>
+-
+ </project>
+diff --git a/source-code/online-voting-channel/ov-control-components/orchestrator/mixing-services/pom.xml b/source-code/online-voting-channel/ov-control-components/orchestrator/mixing-services/pom.xml
+index 465fba1..c1771a8 100644
+--- a/source-code/online-voting-channel/ov-control-components/orchestrator/mixing-services/pom.xml
++++ b/source-code/online-voting-channel/ov-control-components/orchestrator/mixing-services/pom.xml
+@@ -56,28 +56,15 @@
+             <artifactId>mockito-core</artifactId>
+             <scope>test</scope>
+         </dependency>
+-        
+-    </dependencies>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons</groupId>
++            <artifactId>ov-commons-dto</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++			<type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
+ 
+-	<profiles>
+-		<profile>
+-			<id>skipTestRun</id>
+-			<activation>
+-				<property>
+-					<name>skipTests</name>
+-					<value>!true</value>
+-				</property>
+-			</activation>
+-			<dependencies>
+-				<dependency>
+-					<groupId>com.scytl.products.ov.channel.commons</groupId>
+-					<artifactId>ov-commons-dto</artifactId>
+-					<version>${project.version}</version>
+-					<type>test-jar</type>
+-					<scope>test</scope>
+-				</dependency>
+-			</dependencies>
+-		</profile>
+-	</profiles>
++    </dependencies>
+ 
+ </project>
+diff --git a/source-code/online-voting-channel/ov-control-components/orchestrator/or-ws-rest/pom.xml b/source-code/online-voting-channel/ov-control-components/orchestrator/or-ws-rest/pom.xml
+index 0bee335..5956685 100644
+--- a/source-code/online-voting-channel/ov-control-components/orchestrator/or-ws-rest/pom.xml
++++ b/source-code/online-voting-channel/ov-control-components/orchestrator/or-ws-rest/pom.xml
+@@ -84,6 +84,22 @@
+             <artifactId>qpid-broker-plugins-memory-store</artifactId>
+             <scope>test</scope>
+         </dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons</groupId>
++            <artifactId>ov-commons-dto</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++			<type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++			<type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
+     </dependencies>
+ 
+     <build>
+diff --git a/source-code/online-voting-channel/ov-control-components/pom.xml b/source-code/online-voting-channel/ov-control-components/pom.xml
+index bc63452..80597da 100644
+--- a/source-code/online-voting-channel/ov-control-components/pom.xml
++++ b/source-code/online-voting-channel/ov-control-components/pom.xml
+@@ -16,7 +16,6 @@
+ 		<commons-logging.version>1.1.1</commons-logging.version>
+ 		<jsr305.version>3.0.2</jsr305.version>
+ 		<log4j.version>1.2.17</log4j.version>
+-		<ojdbc8.version>18.3.0.0.0</ojdbc8.version>
+         <hikapicp.version>3.2.0</hikapicp.version>
+         <h2.version>1.4.197</h2.version>
+ 	</properties>
+@@ -122,11 +121,6 @@
+ 				<version>${jsr305.version}</version>
+ 				<scope>provided</scope>
+ 			</dependency>
+-			<dependency>
+-				<groupId>com.oracle</groupId>
+-				<artifactId>ojdbc8</artifactId>
+-				<version>${ojdbc8.version}</version>
+-			</dependency>
+             <dependency>
+               <groupId>com.zaxxer</groupId>
+               <artifactId>HikariCP</artifactId>
+diff --git a/source-code/online-voting-channel/ov-election-information/ei-ws-rest/pom.xml b/source-code/online-voting-channel/ov-election-information/ei-ws-rest/pom.xml
+index 59d9487..15652c0 100644
+--- a/source-code/online-voting-channel/ov-election-information/ei-ws-rest/pom.xml
++++ b/source-code/online-voting-channel/ov-election-information/ei-ws-rest/pom.xml
+@@ -65,11 +65,11 @@
+             <scope>test</scope>
+         </dependency>
+         <dependency>
+-            <groupId>com.oracle</groupId>
++            <groupId>com.oracle.jdbc</groupId>
+             <artifactId>ojdbc8</artifactId>
+-            <version>${oracle-driver.version}</version>
+-            <scope>test</scope>
++            <scope>provided</scope>
+         </dependency>
++		
+     </dependencies>
+ 
+     <build>
+diff --git a/source-code/online-voting-channel/ov-election-information/election-information-services/pom.xml b/source-code/online-voting-channel/ov-election-information/election-information-services/pom.xml
+index f7ab46f..ec0eda7 100644
+--- a/source-code/online-voting-channel/ov-election-information/election-information-services/pom.xml
++++ b/source-code/online-voting-channel/ov-election-information/election-information-services/pom.xml
+@@ -76,40 +76,29 @@
+ 			<version>${scytl-math.version}</version>
+ 			<scope>test</scope>
+ 		</dependency>
+-
+-
+-	</dependencies>
+-	<profiles>
+-      <profile>
+-        <id>skipTestRun</id>
+-        <activation>
+-          <property>
+-            <name>skipTests</name>
+-            <value>!true</value>
+-          </property>
+-        </activation>
+-        <dependencies>
+-          <dependency>
++        <dependency>
+               <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
+               <artifactId>ov-commons-lib-persistence</artifactId>
++              <version>${project.version}</version>
++              <classifier>tests</classifier>
+               <type>test-jar</type>
+               <scope>test</scope>
+-          </dependency>
+-          <dependency>
++        </dependency>
++        <dependency>
+             <groupId>com.scytl.products.ov.channel.commons</groupId>
+             <artifactId>ov-commons-sign</artifactId>
+             <version>${project.version}</version>
++            <classifier>tests</classifier>
+             <scope>test</scope>
+             <type>test-jar</type>
+-          </dependency>
+-          <dependency>
++        </dependency>
++        <dependency>
+             <groupId>com.scytl.products.ov.channel.commons</groupId>
+             <artifactId>ov-commons-dto</artifactId>
+             <version>${project.version}</version>
++            <classifier>tests</classifier>
+             <type>test-jar</type>
+             <scope>test</scope>
+-          </dependency>
+-        </dependencies>
+-      </profile>
+-    </profiles>
++        </dependency>
++	</dependencies>
+ </project>
+diff --git a/source-code/online-voting-channel/ov-extended-authentication/ea-ws-rest/pom.xml b/source-code/online-voting-channel/ov-extended-authentication/ea-ws-rest/pom.xml
+index 7218e8f..3055691 100644
+--- a/source-code/online-voting-channel/ov-extended-authentication/ea-ws-rest/pom.xml
++++ b/source-code/online-voting-channel/ov-extended-authentication/ea-ws-rest/pom.xml
+@@ -95,6 +95,22 @@
+                 </exclusion>
+             </exclusions>
+         </dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib-persistence</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
+     </dependencies>
+ 
+     <build>
+@@ -103,32 +119,6 @@
+     <!-- The profile below can be used if the HTML API files should be generated -->
+     <!-- It includes the installation of node, npm and raml2html -->
+     <profiles>
+-        <profile>
+-            <id>skipTestRun</id>
+-            <activation>
+-                <property>
+-                    <name>skipTests</name>
+-                    <value>!true</value>
+-                </property>
+-            </activation>
+-            <dependencies>
+-                <dependency>
+-                    <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
+-                    <artifactId>ov-commons-lib</artifactId>
+-                    <version>${project.version}</version>
+-                    <type>test-jar</type>
+-                    <scope>test</scope>
+-                </dependency>
+-
+-                <dependency>
+-                    <groupId>com.scytl.products.ov.channel.ea.services</groupId>
+-                    <artifactId>extended-authentication-services</artifactId>
+-                    <version>${project.version}</version>
+-                    <type>test-jar</type>
+-                    <scope>test</scope>
+-                </dependency>
+-            </dependencies>
+-        </profile>
+         <profile>
+             <id>generate-all-html-apis</id>
+             <build>
+diff --git a/source-code/online-voting-channel/ov-vote-verification/vote-verification-services/pom.xml b/source-code/online-voting-channel/ov-vote-verification/vote-verification-services/pom.xml
+index 88da9f6..5e73162 100644
+--- a/source-code/online-voting-channel/ov-vote-verification/vote-verification-services/pom.xml
++++ b/source-code/online-voting-channel/ov-vote-verification/vote-verification-services/pom.xml
+@@ -46,26 +46,13 @@
+ 			<version>${scytl-math.version}</version>
+ 			<scope>test</scope>
+ 		</dependency>
++		<dependency>
++			<groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++			<artifactId>ov-commons-lib-persistence</artifactId>
++			<version>${project.version}</version>
++			<classifier>tests</classifier>
++			<type>test-jar</type>
++			<scope>test</scope>
++		</dependency>
+ 	</dependencies>
+-
+-	<profiles>
+-		<profile>
+-			<id>skipTestRun</id>
+-			<activation>
+-				<property>
+-					<name>skipTests</name>
+-					<value>!true</value>
+-				</property>
+-			</activation>
+-			<dependencies>
+-				<dependency>
+-					<groupId>com.scytl.products.ov.channel.commons.lib</groupId>
+-					<artifactId>ov-commons-lib-persistence</artifactId>
+-					<version>${project.version}</version>
+-					<type>test-jar</type>
+-					<scope>test</scope>
+-				</dependency>
+-			</dependencies>
+-		</profile>
+-	</profiles>
+ </project>
+diff --git a/source-code/online-voting-channel/ov-vote-verification/vv-ws-rest/pom.xml b/source-code/online-voting-channel/ov-vote-verification/vv-ws-rest/pom.xml
+index 3b506c9..8dea14e 100644
+--- a/source-code/online-voting-channel/ov-vote-verification/vv-ws-rest/pom.xml
++++ b/source-code/online-voting-channel/ov-vote-verification/vv-ws-rest/pom.xml
+@@ -56,6 +56,22 @@
+             <version>${project.version}</version>
+             <scope>test</scope>
+         </dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib-persistence</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
+     </dependencies>
+ 
+     <build>
+@@ -64,24 +80,6 @@
+     <!-- The profile below can be used if the HTML API files should be generated -->
+     <!-- It includes the installation of node, npm and raml2html -->
+     <profiles>
+-        <profile>
+-          <id>skipTestRun</id>
+-          <activation>
+-            <property>
+-              <name>skipTests</name>
+-              <value>!true</value>
+-            </property>
+-          </activation>
+-          <dependencies>
+-            <dependency>
+-                <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
+-                <artifactId>ov-commons-lib</artifactId>
+-                <version>${project.version}</version>
+-                <type>test-jar</type>
+-                <scope>test</scope>
+-            </dependency>
+-          </dependencies>
+-        </profile>
+         <profile>
+             <id>generate-all-html-apis</id>
+             <build>
+diff --git a/source-code/online-voting-channel/ov-voter-material/voter-material-services/pom.xml b/source-code/online-voting-channel/ov-voter-material/voter-material-services/pom.xml
+index f36770e..55f526e 100644
+--- a/source-code/online-voting-channel/ov-voter-material/voter-material-services/pom.xml
++++ b/source-code/online-voting-channel/ov-voter-material/voter-material-services/pom.xml
+@@ -60,26 +60,14 @@
+             <version>3.4</version>
+             <scope>test</scope>
+         </dependency>
++        <dependency>
++            <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++            <artifactId>ov-commons-lib-persistence</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
+ 	</dependencies>
+ 	
+-	<profiles>
+-      <profile>
+-        <id>skipTestRun</id>
+-        <activation>
+-          <property>
+-            <name>skipTests</name>
+-            <value>!true</value>
+-          </property>
+-        </activation>
+-        <dependencies>
+-          <dependency>
+-              <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
+-              <artifactId>ov-commons-lib-persistence</artifactId>
+-              <version>${project.version}</version>
+-              <type>test-jar</type>
+-              <scope>test</scope>
+-          </dependency>
+-        </dependencies>
+-      </profile>
+-    </profiles>
+ </project>
+\ No newline at end of file
+diff --git a/source-code/online-voting-channel/ov-voting-workflow/voting-workflow-services/pom.xml b/source-code/online-voting-channel/ov-voting-workflow/voting-workflow-services/pom.xml
+index 3cbd88d..1ba750a 100644
+--- a/source-code/online-voting-channel/ov-voting-workflow/voting-workflow-services/pom.xml
++++ b/source-code/online-voting-channel/ov-voting-workflow/voting-workflow-services/pom.xml
+@@ -66,26 +66,13 @@
+             <groupId>org.apache.commons</groupId>
+             <artifactId>commons-lang3</artifactId>
+         </dependency>
++		<dependency>
++			<groupId>com.scytl.products.ov.channel.commons.lib</groupId>
++			<artifactId>ov-commons-lib-persistence</artifactId>
++			<version>${project.version}</version>
++			<classifier>tests</classifier>
++			<type>test-jar</type>
++			<scope>test</scope>
++		</dependency>
+     </dependencies>
+-    
+-	<profiles>
+-      <profile>
+-        <id>skipTestRun</id>
+-        <activation>
+-          <property>
+-            <name>skipTests</name>
+-            <value>!true</value>
+-          </property>
+-        </activation>
+-        <dependencies>
+-          <dependency>
+-              <groupId>com.scytl.products.ov.channel.commons.lib</groupId>
+-              <artifactId>ov-commons-lib-persistence</artifactId>
+-              <version>${project.version}</version>
+-              <type>test-jar</type>
+-              <scope>test</scope>
+-          </dependency>
+-        </dependencies>
+-      </profile>
+-    </profiles>
+ </project>
+diff --git a/source-code/online-voting-channel/pom.xml b/source-code/online-voting-channel/pom.xml
+index 9154a5e..5153340 100644
+--- a/source-code/online-voting-channel/pom.xml
++++ b/source-code/online-voting-channel/pom.xml
+@@ -31,7 +31,7 @@
+         <mockito.version>1.10.19</mockito.version>
+         <jackson.version>2.9.5</jackson.version>
+         <jwt.version>0.9.0</jwt.version>
+-        <logging.version>1.4.1</logging.version>
++        <logging.version>1.4.2</logging.version>
+         <commons.lang.version>3.3.2</commons.lang.version>
+         <commons.configuration.version>1.10</commons.configuration.version>
+         <commons.io.version>2.4</commons.io.version>
+@@ -39,7 +39,7 @@
+         <slf4j-api.version>1.7.10</slf4j-api.version>
+         <maven.compiler.source>1.8</maven.compiler.source>
+         <maven.compiler.target>1.8</maven.compiler.target>
+-        <cryptolib.version>2.1.5-4</cryptolib.version>
++        <cryptolib.version>2.1.54</cryptolib.version>
+         <scytl-math.version>1.0.1</scytl-math.version>
+         <scytl-gmp.version>6.1.1</scytl-gmp.version>
+         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+@@ -72,7 +72,7 @@
+         <maven-war-plugin.version>3.2.0</maven-war-plugin.version>
+         <mixing.version>0.3.2</mixing.version>
+         <rabbitmq.version>5.4.1</rabbitmq.version>
+-        <oracle-driver.version>18.3.0.0.0</oracle-driver.version>
++        <oracle-driver.version>18.3.0.0</oracle-driver.version>
+         <org.msgpack.version>0.8.16</org.msgpack.version>
+         <jsr305.version>3.0.2</jsr305.version>
+     <qpid.version>7.1.0</qpid.version>
+@@ -171,6 +171,11 @@
+                     <artifactId>qpid-broker-plugins-memory-store</artifactId>
+                     <version>${qpid.version}</version>
+                 </dependency>
++                <dependency>
++                    <groupId>com.oracle.jdbc</groupId>
++                    <artifactId>ojdbc8</artifactId>
++                    <version>${oracle-driver.version}</version>
++                </dependency>
+             </dependencies>
+         </dependencyManagement>
+     <build>
+@@ -194,7 +199,7 @@
+                     <artifactId>maven-surefire-plugin</artifactId>
+                     <version>${surfire.version}</version>
+                     <configuration>
+-                        <skipTests>false</skipTests>
++                        <skipTests>${skipTests}</skipTests>
+                     </configuration>
+                 </plugin>
+             </plugins>
+@@ -224,6 +229,7 @@
+                         <exclude>**/.*/**</exclude>
+                         <exclude>target/**</exclude>
+                     </excludes>
++					<skip>${skipTests}</skip>
+                     <properties>
+                         <currentYear>2018</currentYear>
+                     </properties>
+@@ -241,6 +247,33 @@
+         </plugins>
+         
+     </build>
++	
++	
++    <repositories>
++        <repository>
++            <id>maven.oracle.com</id>
++            <name>oracle-maven-repo</name>
++            <url>https://maven.oracle.com</url>
++            <layout>default</layout>
++            <releases>
++                <enabled>true</enabled>
++                <updatePolicy>always</updatePolicy>
++            </releases>
++        </repository>
++    </repositories>
++    <pluginRepositories>
++        <pluginRepository>
++            <id>maven.oracle.com</id>
++            <name>oracle-maven-repo</name>
++            <url>https://maven.oracle.com</url>
++            <layout>default</layout>
++            <releases>
++                <enabled>true</enabled>
++                <updatePolicy>always</updatePolicy>
++            </releases>
++        </pluginRepository>
++    </pluginRepositories>
++	
+     <modules>
+         <module>ov-commons</module>
+         <module>ov-control-components</module>
+diff --git a/source-code/online-voting-client-library/.npmrc b/source-code/online-voting-client-library/.npmrc
+deleted file mode 100644
+index e7f43c2..0000000
+--- a/source-code/online-voting-client-library/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+diff --git a/source-code/online-voting-client-library/package.json b/source-code/online-voting-client-library/package.json
+index 6e56ef6..7ed1ace 100644
+--- a/source-code/online-voting-client-library/package.json
++++ b/source-code/online-voting-client-library/package.json
+@@ -75,6 +75,6 @@
+     ]
+   },
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/online-voting-client-library/readme.md b/source-code/online-voting-client-library/readme.md
+index 3f76eb9..a23b61b 100644
+--- a/source-code/online-voting-client-library/readme.md
++++ b/source-code/online-voting-client-library/readme.md
+@@ -6,9 +6,7 @@ dependencies for a voting client.
+ 
+ ## API documentation
+     
+-For API guide:
+-
+-https://scm.scytl.net/stash/projects/COMP/repos/online-voting-client-library/browse/ov-client-js/doc/api-guide.md
++[API guide](doc/api-guide.md)
+ 
+ For API JSdocs see:
+ 
+diff --git a/source-code/online-voting-mixing/mixing-commons/pom.xml b/source-code/online-voting-mixing/mixing-commons/pom.xml
+index 82f5abb..bf2dfbb 100644
+--- a/source-code/online-voting-mixing/mixing-commons/pom.xml
++++ b/source-code/online-voting-mixing/mixing-commons/pom.xml
+@@ -83,6 +83,22 @@
+ 
+     </dependencies>
+ 
++    <build>
++        <plugins>
++            <plugin>
++                <groupId>org.apache.maven.plugins</groupId>
++                <artifactId>maven-jar-plugin</artifactId>
++                <executions>
++                    <execution>
++                        <goals>
++                            <goal>test-jar</goal>
++                        </goals>
++                    </execution>
++                </executions>
++            </plugin>
++        </plugins>
++    </build>
++
+     <!-- The following section is needed by test profiles that exist in other 
+         modules, it should be removed in future if such profiles are removed or if 
+         any alternative to having this section is found. -->
+diff --git a/source-code/online-voting-mixing/mixnet-engine/pom.xml b/source-code/online-voting-mixing/mixnet-engine/pom.xml
+index 9273bae..831a8bc 100644
+--- a/source-code/online-voting-mixing/mixnet-engine/pom.xml
++++ b/source-code/online-voting-mixing/mixnet-engine/pom.xml
+@@ -59,15 +59,24 @@
+             <artifactId>hamcrest-all</artifactId>
+             <scope>test</scope>
+         </dependency>
++        <dependency>
++            <groupId>com.scytl.mixing</groupId>
++            <artifactId>mixing-commons</artifactId>
++            <version>${project.version}</version>
++            <classifier>tests</classifier>
++            <type>test-jar</type>
++            <scope>test</scope>
++        </dependency>
+ 
+         <dependency>
+             <groupId>org.mockito</groupId>
+             <artifactId>mockito-core</artifactId>
++            <scope>test</scope>
+         </dependency>
+         <dependency>
+             <groupId>org.mockito</groupId>
+             <artifactId>mockito-all</artifactId>
+-            <version>RELEASE</version>
++            <scope>test</scope>
+         </dependency>
+ 
+     </dependencies>
+diff --git a/source-code/online-voting-mixing/pom.xml b/source-code/online-voting-mixing/pom.xml
+index d589a50..fd8a4f6 100644
+--- a/source-code/online-voting-mixing/pom.xml
++++ b/source-code/online-voting-mixing/pom.xml
+@@ -171,6 +171,12 @@
+ 				<version>2.7.5</version>
+ 				<scope>test</scope>
+ 			</dependency>
++			<dependency>
++				<groupId>org.mockito</groupId>
++				<artifactId>mockito-all</artifactId>
++				<version>1.10.19</version>
++				<scope>test</scope>
++			</dependency>
+ 
+ 			<!-- spring dependencies -->
+ 			<dependency>
+@@ -256,7 +262,6 @@
+         <module>mixing-prover</module>
+ 		<module>mixing-core</module>
+ 		<module>mixnet-spring</module>
+-		<module>mixnet-tools</module>
+ 	</modules>
+ 
+ 	<build>
+diff --git a/source-code/online-voting-secure-data-manager/config-generator/config-shares/pom.xml b/source-code/online-voting-secure-data-manager/config-generator/config-shares/pom.xml
+index a251afd..1529b35 100644
+--- a/source-code/online-voting-secure-data-manager/config-generator/config-shares/pom.xml
++++ b/source-code/online-voting-secure-data-manager/config-generator/config-shares/pom.xml
+@@ -43,6 +43,10 @@
+             <artifactId>shares</artifactId>
+             <groupId>com.scytl.shares</groupId>
+         </dependency>
++        <dependency>
++            <groupId>com.scytl.jbasis</groupId>
++            <artifactId>cryptography</artifactId>
++        </dependency>
+         
+         <!-- other crypto dependencies -->
+         <dependency>
+diff --git a/source-code/online-voting-secure-data-manager/config-generator/pom.xml b/source-code/online-voting-secure-data-manager/config-generator/pom.xml
+index 9cd473c..4dd7f44 100644
+--- a/source-code/online-voting-secure-data-manager/config-generator/pom.xml
++++ b/source-code/online-voting-secure-data-manager/config-generator/pom.xml
+@@ -192,7 +192,7 @@
+ 			<dependency>
+ 				<groupId>iaik</groupId>
+ 				<artifactId>iaikPkcs11Wrapper</artifactId>
+-				<version>1.3</version>
++				<version>1.4</version>
+ 			</dependency>
+ 			<dependency>
+ 				<groupId>com.scytl.math</groupId>
+diff --git a/source-code/online-voting-secure-data-manager/mix-net/mixnet-webapp/pom.xml b/source-code/online-voting-secure-data-manager/mix-net/mixnet-webapp/pom.xml
+index f85b35c..bdfa653 100644
+--- a/source-code/online-voting-secure-data-manager/mix-net/mixnet-webapp/pom.xml
++++ b/source-code/online-voting-secure-data-manager/mix-net/mixnet-webapp/pom.xml
+@@ -68,7 +68,18 @@
+             <artifactId>scytl-math</artifactId>
+             <scope>test</scope>
+         </dependency>
+-
++        <dependency>
++            <groupId>org.mockito</groupId>
++            <artifactId>mockito-core</artifactId>
++            <version>${mockito.version}</version>
++            <scope>test</scope>
++        </dependency>
++        <dependency>
++            <groupId>org.hamcrest</groupId>
++            <artifactId>hamcrest-all</artifactId>
++            <version>1.3</version>
++            <scope>test</scope>
++        </dependency>
+ 
+         <!-- SPRING dependencies-->
+         <dependency>
+diff --git a/source-code/online-voting-secure-data-manager/pom.xml b/source-code/online-voting-secure-data-manager/pom.xml
+index cc4cc01..22e7c72 100644
+--- a/source-code/online-voting-secure-data-manager/pom.xml
++++ b/source-code/online-voting-secure-data-manager/pom.xml
+@@ -35,7 +35,7 @@
+ 		<swagger.mavenplugin.version>3.1.0</swagger.mavenplugin.version>
+ 		<okhttp.version>3.8.0</okhttp.version>
+ 		<logback-classic.version>1.2.3</logback-classic.version>
+-		<log4j.version>2.2</log4j.version>
++		<log4j.version>1.2.17</log4j.version>
+ 		<logging.version>1.4.2</logging.version>
+ 		<javax.json.version>1.0.4</javax.json.version>
+ 		<javax.inject.version>1.0-PFD-1</javax.inject.version>
+@@ -84,6 +84,11 @@
+ 				<artifactId>ov-secure-data-manager-commons</artifactId>
+ 				<version>${project.version}</version>
+ 			</dependency>
++			<dependency>
++				<groupId>com.scytl.jbasis</groupId>
++				<artifactId>cryptography</artifactId>
++				<version>4.2.1</version>
++			</dependency>
+ 			<dependency>
+ 				<groupId>commons-collections</groupId>
+ 				<artifactId>commons-collections</artifactId>
+@@ -215,6 +220,7 @@
+                         <exclude>node_modules/**</exclude>
+                         <exclude>release/**</exclude>
+                     </excludes>
++					<skip>${skipTests}</skip>
+                     <properties>
+                         <currentYear>2018</currentYear>
+                     </properties>
+diff --git a/source-code/online-voting-secure-data-manager/secure-data-manager-assembly/pom.xml b/source-code/online-voting-secure-data-manager/secure-data-manager-assembly/pom.xml
+index 0060b5c..dc6b394 100644
+--- a/source-code/online-voting-secure-data-manager/secure-data-manager-assembly/pom.xml
++++ b/source-code/online-voting-secure-data-manager/secure-data-manager-assembly/pom.xml
+@@ -14,24 +14,25 @@
+ 	<description>OV Secure Data Manager Assembly</description>
+ 
+ 	<properties>
++		<!-- properties are reuqired for izpack, see src/main/izpack/install.xml-->
+ 		<sdm.application.version>${project.version}</sdm.application.version>
+ 		<javac.version>1.8</javac.version>
++		<groovy-all.version>2.4.12</groovy-all.version>
++		<bsf.version>2.4.0</bsf.version>
++		<commons-logging.version>1.2</commons-logging.version>
++		<Izpack-validator.version>${project.version}</Izpack-validator.version><!-- This is needed in the ant install.xml file -->
++		<groovy-ant.version>2.4.12</groovy-ant.version>
++		<ant.version>1.9.5</ant.version>
++		<ant-launcher.version>1.9.3</ant-launcher.version>
+ 		<jce.version>8</jce.version>
++		<apache-tomcat.version>8.5.32</apache-tomcat.version>
++		<scytl-math.version>1.0.1</scytl-math.version>
+ 		<surfire.version>2.17</surfire.version>
+-		<izpack.version>5.0.6</izpack.version>
+ 		<izpack.staging>${project.build.directory}</izpack.staging>
+-		<Izpack-validator.version>${project.version}</Izpack-validator.version><!-- This is needed in the ant install.xml file -->
+ 		<launch4j.version>1.7.16</launch4j.version>
+ 		<launch4j.jre.minVersion>1.8.0_45</launch4j.jre.minVersion>
+ 		<launch4j.jre.maxVersion>1.8.0_999</launch4j.jre.maxVersion>
+ 		<jakarta-regexp.version>1.4</jakarta-regexp.version>
+-		<bsf.version>2.4.0</bsf.version>
+-		<groovy-all.version>2.4.12</groovy-all.version>
+-		<groovy-ant.version>2.4.12</groovy-ant.version>
+-		<commons-logging.version>1.2</commons-logging.version>
+-		<ant.version>1.9.5</ant.version>
+-		<ant-launcher.version>1.9.3</ant-launcher.version>
+-		<apache-tomcat.version>8.5.32</apache-tomcat.version>
+ 	</properties>
+ 	
+ 	<dependencyManagement>
+@@ -50,9 +51,9 @@
+ 			</dependency>
+ 	
+ 			<dependency>
+-				<groupId>org.apache.bsf</groupId>
++				<groupId>bsf</groupId>
+ 				<artifactId>bsf</artifactId>
+-				<version>${bsf.version}</version>
++				<version>2.4.0</version>
+ 			</dependency>
+ 	
+ 			<dependency>
+@@ -94,23 +95,21 @@
+ 			<dependency>
+ 				<groupId>org.apache.tomcat</groupId>
+ 				<artifactId>apache-tomcat</artifactId>
+-				<version>${apache-tomcat.version}-windows</version>
+-				<classifier>x86</classifier>
++				<version>8.5.32-windows-x86</version>
+ 				<type>zip</type>
+ 			</dependency>
+ 	
+ 			<dependency>
+ 				<groupId>org.apache.tomcat</groupId>
+ 				<artifactId>apache-tomcat</artifactId>
+-				<version>${apache-tomcat.version}-windows</version>
+-				<classifier>x64</classifier>
++				<version>8.5.32-windows-x64</version>
+ 				<type>zip</type>
+ 			</dependency>
+ 	
+ 			<dependency>
+ 				<groupId>org.apache.tomcat</groupId>
+ 				<artifactId>apache-tomcat</artifactId>
+-				<version>${apache-tomcat.version}</version>
++				<version>8.5.32</version>
+ 				<type>zip</type>
+ 			</dependency>
+ 	
+@@ -159,7 +158,7 @@
+     </dependency>
+ 
+     <dependency>
+-      <groupId>org.apache.bsf</groupId>
++      <groupId>bsf</groupId>
+       <artifactId>bsf</artifactId>
+     </dependency>
+ 
+@@ -196,23 +195,25 @@
+     <dependency>
+       <groupId>org.apache.tomcat</groupId>
+       <artifactId>apache-tomcat</artifactId>
+-      <classifier>x86</classifier>
++      <version>8.5.32-windows-x86</version>
+       <type>zip</type>
+     </dependency>
+ 
+     <dependency>
+       <groupId>org.apache.tomcat</groupId>
+       <artifactId>apache-tomcat</artifactId>
+-      <classifier>x64</classifier>
++      <version>8.5.32-windows-x64</version>
+       <type>zip</type>
+     </dependency>
+ 
+     <dependency>
+       <groupId>org.apache.tomcat</groupId>
+       <artifactId>apache-tomcat</artifactId>
++      <version>8.5.32</version>
+       <type>zip</type>
+     </dependency>
+-
++	
++<!-- FIXME: MISSING 3rd party dependencies 
+     <dependency>
+       <groupId>com.safesign</groupId>
+       <artifactId>Safesign</artifactId>
+@@ -238,6 +239,7 @@
+       <classifier>linux_x86_64</classifier>
+       <type>zip</type>
+     </dependency>
++-->
+   </dependencies>
+ 	<build>
+ 		<plugins>
+@@ -255,8 +257,9 @@
+ 							<artifactItems>
+ 
+ 								<artifactItem>
+-									<groupId>org.apache.bsf</groupId>
++									<groupId>bsf</groupId>
+ 									<artifactId>bsf</artifactId>
++									<version>2.4.0</version>
+ 									<type>jar</type>
+ 									<outputDirectory>${project.build.directory}/jars/</outputDirectory>
+ 								</artifactItem>
+@@ -307,7 +310,7 @@
+ 								<artifactItem>
+ 									<groupId>org.apache.tomcat</groupId>
+ 									<artifactId>apache-tomcat</artifactId>
+-									<classifier>x86</classifier>
++									<version>8.5.32-windows-x86</version>
+ 									<type>zip</type>
+ 									<outputDirectory>${project.build.directory}/install/</outputDirectory>
+ 								</artifactItem>
+@@ -315,7 +318,7 @@
+ 								<artifactItem>
+ 									<groupId>org.apache.tomcat</groupId>
+ 									<artifactId>apache-tomcat</artifactId>
+-									<classifier>x64</classifier>
++									<version>8.5.32-windows-x64</version>
+ 									<type>zip</type>
+ 									<outputDirectory>${project.build.directory}/install/</outputDirectory>
+ 								</artifactItem>
+@@ -323,10 +326,11 @@
+ 								<artifactItem>
+ 									<groupId>org.apache.tomcat</groupId>
+ 									<artifactId>apache-tomcat</artifactId>
++									<version>8.5.32</version>
+ 									<type>zip</type>
+ 									<outputDirectory>${project.build.directory}/install/</outputDirectory>
+ 								</artifactItem>
+-
++<!-- FIXME: MISSING 3rd party dependencies 
+ 								<artifactItem>
+ 									<groupId>com.safesign</groupId>
+ 									<artifactId>Safesign</artifactId>
+@@ -356,7 +360,7 @@
+ 									<type>zip</type>
+ 									<outputDirectory>${project.build.directory}/install/</outputDirectory>
+ 								</artifactItem>
+-
++-->
+ 							</artifactItems>
+ 						</configuration>
+ 					</execution>
+@@ -405,7 +409,7 @@
+ 			<plugin>
+ 				<groupId>org.codehaus.izpack</groupId>
+ 				<artifactId>izpack-maven-plugin</artifactId>
+-				<version>${izpack.version}</version>
++				<version>5.0.6</version>
+ 				<executions>
+ 					<execution>
+ 						<phase>prepare-package</phase>
+@@ -425,7 +429,7 @@
+ 					<dependency>
+ 						<groupId>org.codehaus.izpack</groupId>
+ 						<artifactId>izpack-panel</artifactId>
+-						<version>${izpack.version}</version>
++						<version>5.0.6</version>
+ 					</dependency>
+ 					<dependency>
+ 						<groupId>jakarta-regexp</groupId>
+diff --git a/source-code/online-voting-secure-data-manager/secure-data-manager-assembly/src/main/izpack/install.xml b/source-code/online-voting-secure-data-manager/secure-data-manager-assembly/src/main/izpack/install.xml
+index 143716d..2c11648 100644
+--- a/source-code/online-voting-secure-data-manager/secure-data-manager-assembly/src/main/izpack/install.xml
++++ b/source-code/online-voting-secure-data-manager/secure-data-manager-assembly/src/main/izpack/install.xml
+@@ -105,6 +105,7 @@
+ 				<include name="**/*" />
+ 			</fileset>
+ 
++			<!-- TODO
+ 			<fileset dir="install/Secure Data Manager/win64" targetdir="$INSTALL_PATH"
+ 				override="true">
+ 				<include name="**/*" />
+@@ -120,7 +121,9 @@
+ 				<include name="**/*" />
+ 				<os arch="x64" family="unix" />
+ 			</fileset>
++			-->
+ 
++			<!-- TODO
+ 			<fileset dir="install/Secure Data Manager/linux32" targetdir="$INSTALL_PATH"
+ 				override="true">
+ 				<include name="**/*" />
+@@ -130,7 +133,8 @@
+ 				stage="never">
+ 				<os family="linux" />
+ 			</executable>
+-
++			-->
++			
+ 			<fileset dir="images" targetdir="$INSTALL_PATH/images">
+ 				<include name="**" />
+ 			</fileset>
+@@ -157,6 +161,7 @@
+ 			<file src="install/bcprov-jdk15on.jar" targetdir="$JAVA_HOME/lib/ext" />
+ 		</pack>
+ 
++		<!-- TODO
+ 		<pack name="Safe Sign" required="no" parent="Secure Data Manager">
+ 			<description>Installs Safe Sign</description>
+ 			<file src="install/SafeSign-x64-1.0.exe" targetdir="$INSTALL_PATH">
+@@ -191,6 +196,8 @@
+ 			</executable>
+ 
+ 		</pack>
++		-->
++		
+ 		<pack name="WebApps" required="yes" parent="Secure Data Manager">
+ 			<description>Installs WebApps</description>
+ 
+diff --git a/source-code/online-voting-secure-data-manager/secure-data-manager-frontend/pom.xml b/source-code/online-voting-secure-data-manager/secure-data-manager-frontend/pom.xml
+index 46909b5..aec30b5 100644
+--- a/source-code/online-voting-secure-data-manager/secure-data-manager-frontend/pom.xml
++++ b/source-code/online-voting-secure-data-manager/secure-data-manager-frontend/pom.xml
+@@ -45,17 +45,7 @@
+                                 <phase>generate-sources</phase>
+                                 <configuration>
+                                     <target name="building">
+-                                        <!--  WINDOWS EXEC  -->
+-                                        <exec executable="cmd" dir="${project.basedir}" osfamily="windows" failonerror="true">
+-                                            <arg line="/c npm install --unsafe-perm --no-optional" />
+-                                        </exec>
+-                                        <exec executable="cmd" dir="${project.basedir}" osfamily="windows" failonerror="true">
+-                                            <arg line="/c bower install --allow-root" />
+-                                        </exec>
+-                                        <exec executable="cmd" dir="${project.basedir}" osfamily="windows" failonerror="true">
+-                                            <arg line="/c grunt app" />
+-                                        </exec>
+-                                        <!--  LINUX EXEC  -->
++                           
+                                         <exec executable="npm" dir="${project.basedir}" osfamily="unix" failonerror="true">
+                                             <arg line="install --unsafe-perm --no-optional" />
+                                         </exec>
+diff --git a/source-code/online-voting-secure-data-manager/secure-data-manager-packaging/pom.xml b/source-code/online-voting-secure-data-manager/secure-data-manager-packaging/pom.xml
+index a60905c..a9a526c 100644
+--- a/source-code/online-voting-secure-data-manager/secure-data-manager-packaging/pom.xml
++++ b/source-code/online-voting-secure-data-manager/secure-data-manager-packaging/pom.xml
+@@ -56,6 +56,7 @@
+ 	            <groupId>com.oracle</groupId>
+ 	            <artifactId>UnlimitedJCEPolicy</artifactId>
+ 	            <version>${jce.version}</version>
++	            <classifier>empty</classifier>
+ 	            <type>zip</type>
+ 	        </dependency>
+ 	        
+@@ -69,7 +70,8 @@
+ 	           <groupId>com.scytl.math</groupId>
+ 	           <artifactId>scytl-math-native</artifactId>
+ 	           <version>${scytl-math.version}</version>
+-	           <type>nar</type>
++	           <classifier>amd64-Windows-gpp-jni</classifier>
++			   <type>nar</type>
+ 	        </dependency>
+ 	        
+ 	        <dependency>
+@@ -135,6 +137,7 @@
+         <dependency>
+             <groupId>com.oracle</groupId>
+             <artifactId>UnlimitedJCEPolicy</artifactId>
++		    <version>8</version>
+             <type>zip</type>
+         </dependency>
+         
+@@ -146,8 +149,10 @@
+         <dependency>
+            <groupId>com.scytl.math</groupId>
+            <artifactId>scytl-math-native</artifactId>
++		   <version>1.0.1</version>
+            <type>nar</type>
+-        </dependency>
++           <classifier>amd64-Windows-gpp-jni</classifier>
++		</dependency>
+         
+         <dependency>
+            <groupId>com.scytl.gmp</groupId>
+diff --git a/source-code/scytl-cryptolib/cryptolib-api-certificates/pom.xml b/source-code/scytl-cryptolib/cryptolib-api-certificates/pom.xml
+index a04a3f4..dbd60b9 100644
+--- a/source-code/scytl-cryptolib/cryptolib-api-certificates/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-api-certificates/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-api-certificates</artifactId>
+ 
+diff --git a/source-code/scytl-cryptolib/cryptolib-api-commons/pom.xml b/source-code/scytl-cryptolib/cryptolib-api-commons/pom.xml
+index 8791342..c86e05f 100644
+--- a/source-code/scytl-cryptolib/cryptolib-api-commons/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-api-commons/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-api-commons</artifactId>
+     <name>Commons API</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-api-digital-envelope/pom.xml b/source-code/scytl-cryptolib/cryptolib-api-digital-envelope/pom.xml
+index 59a4cb4..ce5e3b5 100644
+--- a/source-code/scytl-cryptolib/cryptolib-api-digital-envelope/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-api-digital-envelope/pom.xml
+@@ -4,7 +4,7 @@
+  <parent>
+   <artifactId>cryptolib</artifactId>
+   <groupId>com.scytl.cryptolib</groupId>
+-  <version>2.1.5-4</version>
++  <version>2.1.54</version>
+  </parent>
+  <artifactId>cryptolib-api-digital-envelope</artifactId>
+  <name>Digital Envelope API</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-api-elgamal/pom.xml b/source-code/scytl-cryptolib/cryptolib-api-elgamal/pom.xml
+index 715a5be..39691ce 100644
+--- a/source-code/scytl-cryptolib/cryptolib-api-elgamal/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-api-elgamal/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-api-elgamal</artifactId>
+ 
+diff --git a/source-code/scytl-cryptolib/cryptolib-api-primitives/pom.xml b/source-code/scytl-cryptolib/cryptolib-api-primitives/pom.xml
+index 6ebb4f0..74faedc 100644
+--- a/source-code/scytl-cryptolib/cryptolib-api-primitives/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-api-primitives/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-api-primitives</artifactId>
+     <name>Primitives API</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-api-proofs/pom.xml b/source-code/scytl-cryptolib/cryptolib-api-proofs/pom.xml
+index 088fd15..1cc9e8c 100644
+--- a/source-code/scytl-cryptolib/cryptolib-api-proofs/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-api-proofs/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-api-proofs</artifactId>
+     <name>Proofs API</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-api-scytl-keystore/pom.xml b/source-code/scytl-cryptolib/cryptolib-api-scytl-keystore/pom.xml
+index 6e259f6..b36c709 100644
+--- a/source-code/scytl-cryptolib/cryptolib-api-scytl-keystore/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-api-scytl-keystore/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-api-scytl-keystore</artifactId>
+     <name>Scytl Key Store API</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-api-stores/pom.xml b/source-code/scytl-cryptolib/cryptolib-api-stores/pom.xml
+index e05a76a..2975077 100644
+--- a/source-code/scytl-cryptolib/cryptolib-api-stores/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-api-stores/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-api-stores</artifactId>
+     <name>Stores API</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-api-symmetric/pom.xml b/source-code/scytl-cryptolib/cryptolib-api-symmetric/pom.xml
+index 614f020..5a6c2f0 100644
+--- a/source-code/scytl-cryptolib/cryptolib-api-symmetric/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-api-symmetric/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-api-symmetric</artifactId>
+     <name>Symmetric API</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-asymmetric/pom.xml b/source-code/scytl-cryptolib/cryptolib-asymmetric/pom.xml
+index 88c1929..09eb4d9 100644
+--- a/source-code/scytl-cryptolib/cryptolib-asymmetric/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-asymmetric/pom.xml
+@@ -4,7 +4,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-asymmetric</artifactId>
+     <name>Asymmetric</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-certificates/pom.xml b/source-code/scytl-cryptolib/cryptolib-certificates/pom.xml
+index ca2c1f5..e71b939 100644
+--- a/source-code/scytl-cryptolib/cryptolib-certificates/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-certificates/pom.xml
+@@ -4,7 +4,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-certificates</artifactId>
+     <name>Certificates</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-commons/pom.xml b/source-code/scytl-cryptolib/cryptolib-commons/pom.xml
+index c3c303d..5bdc9f6 100644
+--- a/source-code/scytl-cryptolib/cryptolib-commons/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-commons/pom.xml
+@@ -5,7 +5,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-commons</artifactId>
+     <name>Commons</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-default-policies/pom.xml b/source-code/scytl-cryptolib/cryptolib-default-policies/pom.xml
+index 99b6dd3..6e2257a 100644
+--- a/source-code/scytl-cryptolib/cryptolib-default-policies/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-default-policies/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-default-policies</artifactId>
+     <name>Default Policies</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-digital-envelope/pom.xml b/source-code/scytl-cryptolib/cryptolib-digital-envelope/pom.xml
+index 98ed09e..f8f2cd3 100644
+--- a/source-code/scytl-cryptolib/cryptolib-digital-envelope/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-digital-envelope/pom.xml
+@@ -4,7 +4,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-digital-envelope</artifactId>
+     <name>Digital Envelope</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-elgamal/pom.xml b/source-code/scytl-cryptolib/cryptolib-elgamal/pom.xml
+index de12705..fbcda42 100644
+--- a/source-code/scytl-cryptolib/cryptolib-elgamal/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-elgamal/pom.xml
+@@ -4,7 +4,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-elgamal</artifactId>
+     <name>ElGamal</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-interoperation/pom.xml b/source-code/scytl-cryptolib/cryptolib-interoperation/pom.xml
+index 076d36c..cdcff3e 100644
+--- a/source-code/scytl-cryptolib/cryptolib-interoperation/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-interoperation/pom.xml
+@@ -4,7 +4,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+ 
+     <artifactId>cryptolib-interoperation</artifactId>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-asymmetric/package.json b/source-code/scytl-cryptolib/cryptolib-js-asymmetric/package.json
+index b313750..4c7c607 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-asymmetric/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-asymmetric/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-asymmetric",
+-  "version": "2.1.5-4",
++  "version": "2.1.74",
+   "description": "Scytl's asymmetric cryptography service",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -15,10 +15,10 @@
+     "chai": "^4.1.2",
+     "jsdoc": "^3.5.5",
+     "node-forge": "^0.7.1",
+-    "scytl-bitwise": "^2.1.5-4",
+-    "scytl-codec": "^2.1.5-4",
+-    "scytl-cryptopolicy": "^2.1.5-4",
+-    "scytl-securerandom": "^2.1.5-4"
++    "scytl-bitwise": "^2.1.54",
++    "scytl-codec": "^2.1.54",
++    "scytl-cryptopolicy": "^2.1.54",
++    "scytl-securerandom": "^2.1.54"
+   },
+   "devDependencies": {
+     "clang-format": "^1.0.53",
+@@ -41,12 +41,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-asymmetric"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-asymmetric"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-asymmetric/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-asymmetric/pom.xml
+index f821579..5b43e25 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-asymmetric/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-asymmetric/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-asymmetric</artifactId>
+     <name>CryptoLib JS Asymmetric Cryptography</name>
+@@ -53,6 +53,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                    <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -89,7 +103,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-bitwise/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-bitwise/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-bitwise/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-bitwise/package.json b/source-code/scytl-cryptolib/cryptolib-js-bitwise/package.json
+index f527ce0..eb4b144 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-bitwise/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-bitwise/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-bitwise",
+-  "version": "2.1.5-4",
++  "version": "2.1.84",
+   "description": "Scytl utility for bitwise operations",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -36,12 +36,19 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-bitwise"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-bitwise"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
++  },
++  "jshintConfig": {
++    "undef": true,
++    "unused": false,
++    "globals": {
++      "beforeAll": true,
++      "expect": true
++    }
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-bitwise/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-bitwise/pom.xml
+index 682e49a..e8d57d8 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-bitwise/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-bitwise/pom.xml
+@@ -4,9 +4,9 @@
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+     <parent>
+-        <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <artifactId>cryptolib</artifactId>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-bitwise</artifactId>
+     <name>CryptoLib JS Bitwise</name>
+@@ -33,6 +33,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                    <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -69,7 +83,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-buildtools/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-buildtools/pom.xml
+index fdf4c59..a1d4bb3 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-buildtools/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-buildtools/pom.xml
+@@ -7,7 +7,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-buildtools</artifactId>
+     <name>CryptoLib JS Build Tools</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-certificate/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-certificate/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-certificate/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-certificate/package.json b/source-code/scytl-cryptolib/cryptolib-js-certificate/package.json
+index ac1144e..2e68988 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-certificate/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-certificate/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-certificate",
+-  "version": "2.1.5-4",
++  "version": "2.1.73",
+   "description": "Scytl's certificate service",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -14,7 +14,7 @@
+   "dependencies": {
+     "jsdoc": "^3.5.5",
+     "node-forge": "^0.7.1",
+-    "scytl-codec": "^2.1.5-4"
++    "scytl-codec": "^2.1.54"
+   },
+   "devDependencies": {
+     "clang-format": "^1.0.53",
+@@ -37,12 +37,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-certificate"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-certificate"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-certificate/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-certificate/pom.xml
+index 0f039c2..2a14929 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-certificate/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-certificate/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-certificate</artifactId>
+     <name>CryptoLib JS Certificate</name>
+@@ -38,6 +38,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                    <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -74,7 +88,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-codec/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-codec/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-codec/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-codec/package.json b/source-code/scytl-cryptolib/cryptolib-js-codec/package.json
+index 462a7e7..4616b3f 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-codec/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-codec/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-codec",
+-  "version": "2.1.5-4",
++  "version": "2.1.83",
+   "description": "Scytl utility for codec operations",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -36,12 +36,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-codec"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-codec"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-codec/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-codec/pom.xml
+index af812de..496fc2f 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-codec/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-codec/pom.xml
+@@ -6,17 +6,19 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-codec</artifactId>
+     <name>CryptoLib JS Codec</name>
+     <description>Scytl's JavaScript codec utility module</description>
++
+     <properties>
+         <sonar.sources>lib</sonar.sources>
+         <sonar.tests>spec</sonar.tests>
+         <sonar.javascript.lcov.reportPath>target/reports/coverage/lcov.info</sonar.javascript.lcov.reportPath>
+         <sonar.genericcoverage.unitTestReportPaths>target/reports/junit</sonar.genericcoverage.unitTestReportPaths>
+     </properties>
++
+     <dependencies>
+         <dependency>
+             <groupId>com.scytl.cryptolib</groupId>
+@@ -24,6 +26,7 @@
+             <version>${project.version}</version>
+         </dependency>
+     </dependencies>
++
+     <build>
+         <plugins>
+             <plugin>
+@@ -31,6 +34,20 @@
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
+                     <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
++					<execution>
+                         <id>initialize</id>
+                         <goals>
+                             <goal>exec</goal>
+@@ -66,7 +83,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope/package.json b/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope/package.json
+index a521ab9..e2382d2 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-digitalenvelope",
+-  "version": "2.1.5-4",
++  "version": "2.1.73",
+   "description": "Scytl's digital envelope service",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -14,11 +14,11 @@
+   "dependencies": {
+     "jsdoc": "^3.5.5",
+     "node-forge": "^0.7.1",
+-    "scytl-bitwise": "^2.1.5-4",
+-    "scytl-codec": "^2.1.5-4",
+-    "scytl-cryptopolicy": "^2.1.5-4",
+-    "scytl-symmetric": "^2.1.5-4",
+-    "scytl-asymmetric": "^2.1.5-4"
++    "scytl-bitwise": "^2.1.54",
++    "scytl-codec": "^2.1.54",
++    "scytl-cryptopolicy": "^2.1.54",
++    "scytl-symmetric": "^2.1.54",
++    "scytl-asymmetric": "^2.1.54"
+   },
+   "devDependencies": {
+     "clang-format": "^1.0.53",
+@@ -41,12 +41,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-digitalenvelope"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope/pom.xml
+index 222343e..e243d3b 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-digitalenvelope/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-digitalenvelope</artifactId>
+     <name>CryptoLib JS Digital Envelope</name>
+@@ -58,6 +58,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                    <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -94,7 +108,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-elgamal/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-elgamal/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-elgamal/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-elgamal/package.json b/source-code/scytl-cryptolib/cryptolib-js-elgamal/package.json
+index c8e3576..852b3c2 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-elgamal/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-elgamal/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-elgamal",
+-  "version": "2.1.5-4",
++  "version": "2.1.72",
+   "description": "Scytl's ElGamal cryptography service",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -14,10 +14,10 @@
+   "dependencies": {
+     "jsdoc": "^3.5.5",
+     "node-forge": "^0.7.1",
+-    "scytl-bitwise": "^2.1.5-4",
+-    "scytl-codec": "^2.1.5-4",
+-    "scytl-securerandom": "^2.1.5-4",
+-    "scytl-mathematical": "^2.1.5-4"
++    "scytl-bitwise": "^2.1.54",
++    "scytl-codec": "^2.1.54",
++    "scytl-securerandom": "^2.1.54",
++    "scytl-mathematical": "^2.1.54"
+   },
+   "devDependencies": {
+     "clang-format": "^1.0.53",
+@@ -40,12 +40,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-elgamal"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-elgamal"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-elgamal/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-elgamal/pom.xml
+index 314e303..41f6222 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-elgamal/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-elgamal/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-elgamal</artifactId>
+     <name>CryptoLib JS ElGamal Cryptography</name>
+@@ -53,6 +53,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                    <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -89,7 +103,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-keystore/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-keystore/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-keystore/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-keystore/package.json b/source-code/scytl-cryptolib/cryptolib-js-keystore/package.json
+index c5a0f2d..b1750ee 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-keystore/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-keystore/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-keystore",
+-  "version": "2.1.5-4",
++  "version": "2.1.71",
+   "description": "Scytl's key store service",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -14,13 +14,13 @@
+   "dependencies": {
+     "jsdoc": "^3.5.5",
+     "node-forge": "^0.7.1",
+-    "scytl-codec": "^2.1.5-4",
+-    "scytl-cryptopolicy": "^2.1.5-4",
+-    "scytl-pbkdf": "^2.1.5-4",
+-    "scytl-certificate": "^2.1.5-4",
+-    "scytl-symmetric": "^2.1.5-4",
+-    "scytl-mathematical": "^2.1.5-4",
+-    "scytl-elgamal": "^2.1.5-4"
++    "scytl-codec": "^2.1.54",
++    "scytl-cryptopolicy": "^2.1.54",
++    "scytl-pbkdf": "^2.1.54",
++    "scytl-certificate": "^2.1.54",
++    "scytl-symmetric": "^2.1.54",
++    "scytl-mathematical": "^2.1.54",
++    "scytl-elgamal": "^2.1.54"
+   },
+   "devDependencies": {
+     "clang-format": "^1.0.53",
+@@ -43,12 +43,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-keystore"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-keystore"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-keystore/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-keystore/pom.xml
+index 203b2e7..7e6ef81 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-keystore/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-keystore/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-keystore</artifactId>
+     <name>CryptoLib JS Key Store</name>
+@@ -68,6 +68,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                   <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -104,7 +118,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-mathematical/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-mathematical/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-mathematical/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-api-asymmetric/pom.xml b/source-code/scytl-cryptolib/cryptolib-api-asymmetric/pom.xml
+index dc33939..d60c633 100644
+--- a/source-code/scytl-cryptolib/cryptolib-api-asymmetric/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-api-asymmetric/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-api-asymmetric</artifactId>
+     <name>Asymmetric API</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-asymmetric/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-asymmetric/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-asymmetric/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-mathematical/package.json b/source-code/scytl-cryptolib/cryptolib-js-mathematical/package.json
+index e921756..fc2e4c1 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-mathematical/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-mathematical/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-mathematical",
+-  "version": "2.1.5-4",
++  "version": "2.1.72",
+   "description": "Scytl's mathematical service",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -14,8 +14,8 @@
+   "dependencies": {
+     "jsdoc": "^3.5.5",
+     "node-forge": "^0.7.1",
+-    "scytl-codec": "^2.1.5-4",
+-    "scytl-securerandom": "^2.1.5-4"
++    "scytl-codec": "^2.1.54",
++    "scytl-securerandom": "^2.1.54"
+   },
+   "devDependencies": {
+     "clang-format": "^1.0.53",
+@@ -38,12 +38,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-mathematical"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-mathematical"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-mathematical/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-mathematical/pom.xml
+index 0370f82..dbdf199 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-mathematical/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-mathematical/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-mathematical</artifactId>
+     <name>CryptoLib JS Mathematical</name>
+@@ -43,6 +43,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                    <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -79,7 +93,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-messagedigest/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-messagedigest/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-messagedigest/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-messagedigest/package.json b/source-code/scytl-cryptolib/cryptolib-js-messagedigest/package.json
+index 524e2a8..fa81ac1 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-messagedigest/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-messagedigest/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-messagedigest",
+-  "version": "2.1.5-4",
++  "version": "2.1.77",
+   "description": "Scytl's message digest service",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -14,9 +14,9 @@
+   "dependencies": {
+     "jsdoc": "^3.5.5",
+     "node-forge": "^0.7.1",
+-    "scytl-bitwise": "^2.1.5-4",
+-    "scytl-codec": "^2.1.5-4",
+-    "scytl-cryptopolicy": "^2.1.5-4"
++    "scytl-bitwise": "^2.1.54",
++    "scytl-codec": "^2.1.54",
++    "scytl-cryptopolicy": "^2.1.54"
+   },
+   "devDependencies": {
+     "clang-format": "^1.0.53",
+@@ -39,12 +39,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-messagedigest"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-messagedigest"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-messagedigest/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-messagedigest/pom.xml
+index d622a10..fd41715 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-messagedigest/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-messagedigest/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-messagedigest</artifactId>
+     <name>CryptoLib JS Message Digest</name>
+@@ -48,6 +48,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                    <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -84,7 +98,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-pbkdf/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-pbkdf/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-pbkdf/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-pbkdf/package.json b/source-code/scytl-cryptolib/cryptolib-js-pbkdf/package.json
+index 4f849b4..5643db8 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-pbkdf/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-pbkdf/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-pbkdf",
+-  "version": "2.1.5-4",
++  "version": "2.1.76",
+   "description": "Scytl's password-based key derivation service",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -15,8 +15,8 @@
+     "jsdoc": "^3.5.5",
+     "node-forge": "^0.7.1",
+     "sjcl": "^1.0.7",
+-    "scytl-codec": "^2.1.5-4",
+-    "scytl-cryptopolicy": "^2.1.5-4"
++    "scytl-codec": "^2.1.54",
++    "scytl-cryptopolicy": "^2.1.54"
+   },
+   "devDependencies": {
+     "clang-format": "^1.0.53",
+@@ -39,12 +39,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-pbkdf"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-pbkdf"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-pbkdf/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-pbkdf/pom.xml
+index 33f3adc..ebb4752 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-pbkdf/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-pbkdf/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-pbkdf</artifactId>
+     <name>CryptoLib JS PBKDF</name>
+@@ -43,6 +43,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                    <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -79,7 +93,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-policy/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-policy/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-policy/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-policy/package.json b/source-code/scytl-cryptolib/cryptolib-js-policy/package.json
+index 9eabe36..9cbcd15 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-policy/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-policy/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-cryptopolicy",
+-  "version": "2.1.5-4",
++  "version": "2.1.80",
+   "description": "Scytl's cryptographic policy",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -32,13 +32,12 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-policy"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-policy"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   },
+   "dependencies": {
+     "jsdoc": "^3.5.5"
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-policy/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-policy/pom.xml
+index 06e99a4..cf55b42 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-policy/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-policy/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-policy</artifactId>
+     <name>CryptoLib JS Policy</name>
+@@ -33,6 +33,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                    <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -69,7 +83,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-securerandom/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-securerandom/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-securerandom/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-securerandom/package.json b/source-code/scytl-cryptolib/cryptolib-js-securerandom/package.json
+index 605c113..3571f48 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-securerandom/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-securerandom/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-securerandom",
+-  "version": "2.1.5-4",
++  "version": "2.1.78",
+   "description": "Scytl's secure random number generation service",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -14,8 +14,8 @@
+   "dependencies": {
+     "jsdoc": "^3.5.5",
+     "node-forge": "^0.7.1",
+-    "scytl-bitwise": "^2.1.5-4",
+-    "scytl-codec": "^2.1.5-4"
++    "scytl-bitwise": "^2.1.54",
++    "scytl-codec": "^2.1.54"
+   },
+   "devDependencies": {
+     "clang-format": "^1.0.53",
+@@ -38,12 +38,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-securerandom"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-securerandom"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-securerandom/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-securerandom/pom.xml
+index 1638bc1..b06e7b4 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-securerandom/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-securerandom/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-securerandom</artifactId>
+     <name>CryptoLib JS Secure Random</name>
+@@ -43,6 +43,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                    <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -79,7 +93,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-symmetric/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-symmetric/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-symmetric/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-symmetric/package.json b/source-code/scytl-cryptolib/cryptolib-js-symmetric/package.json
+index d9591cc..1547f44 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-symmetric/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-symmetric/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-symmetric",
+-  "version": "2.1.5-4",
++  "version": "2.1.75",
+   "description": "Scytl's symmetric cryptography service",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -14,10 +14,10 @@
+   "dependencies": {
+     "jsdoc": "^3.5.5",
+     "node-forge": "^0.7.1",
+-    "scytl-bitwise": "^2.1.5-4",
+-    "scytl-codec": "^2.1.5-4",
+-    "scytl-cryptopolicy": "^2.1.5-4",
+-    "scytl-securerandom": "^2.1.5-4"
++    "scytl-bitwise": "^2.1.54",
++    "scytl-codec": "^2.1.54",
++    "scytl-cryptopolicy": "^2.1.54",
++    "scytl-securerandom": "^2.1.54"
+   },
+   "devDependencies": {
+     "clang-format": "^1.0.53",
+@@ -40,12 +40,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-symmetric"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-symmetric"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-symmetric/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-symmetric/pom.xml
+index 29e0c9e..246cc4c 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-symmetric/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-symmetric/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-symmetric</artifactId>
+     <name>CryptoLib JS Symmetric Cryptography</name>
+@@ -53,6 +53,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                    <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -89,7 +103,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-zkproof/.npmrc b/source-code/scytl-cryptolib/cryptolib-js-zkproof/.npmrc
+deleted file mode 100644
+index 67e0d4b..0000000
+--- a/source-code/scytl-cryptolib/cryptolib-js-zkproof/.npmrc
++++ /dev/null
+@@ -1 +0,0 @@
+-registry=https://nexus.scytl.net/content/groups/public-npm/
+\ No newline at end of file
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-zkproof/package.json b/source-code/scytl-cryptolib/cryptolib-js-zkproof/package.json
+index 757a2ea..bcb8eac 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-zkproof/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js-zkproof/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "scytl-zkproof",
+-  "version": "2.1.5-4",
++  "version": "2.1.71",
+   "description": "Scytl's zero-knowledge proof service",
+   "main": "lib/index.js",
+   "scripts": {
+@@ -14,12 +14,12 @@
+   "dependencies": {
+     "jsdoc": "^3.5.5",
+     "node-forge": "^0.7.1",
+-    "scytl-codec": "^2.1.5-4",
+-    "scytl-cryptopolicy": "^2.1.5-4",
+-    "scytl-messagedigest": "^2.1.5-4",
+-    "scytl-securerandom": "^2.1.5-4",
+-    "scytl-mathematical": "^2.1.5-4",
+-    "scytl-elgamal": "^2.1.5-4"
++    "scytl-codec": "^2.1.54",
++    "scytl-cryptopolicy": "^2.1.54",
++    "scytl-messagedigest": "^2.1.54",
++    "scytl-securerandom": "^2.1.54",
++    "scytl-mathematical": "^2.1.54",
++    "scytl-elgamal": "^2.1.54"
+   },
+   "devDependencies": {
+     "clang-format": "^1.0.53",
+@@ -42,12 +42,11 @@
+   },
+   "repository": {
+     "type": "git",
+-    "url": "https://scm.scytl.net/stash/projects/COMM/repos/scytl-cryptolib/cryptolib-js-zkproof"
++    "url": "https://gitlab.com/swisspost/evoting-solution/tree/master/source-code/scytl-cryptolib/cryptolib-js-zkproof"
+   },
+   "author": "Scytl Secure Electronic Voting SA",
+   "license": "UNLICENSED",
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js-zkproof/pom.xml b/source-code/scytl-cryptolib/cryptolib-js-zkproof/pom.xml
+index caea014..72b0206 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js-zkproof/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js-zkproof/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-js-zkproof</artifactId>
+     <name>CryptoLib JS Zero-Knowledge Proof</name>
+@@ -63,6 +63,20 @@
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>exec-maven-plugin</artifactId>
+                 <executions>
++                   <execution>
++                        <id>npm-version</id>
++                        <goals>
++                            <goal>exec</goal>
++                        </goals>
++                        <phase>clean</phase>
++                        <configuration>
++                            <executable>npm</executable>
++                            <arguments>
++                                <argument>version</argument>
++                                <argument>patch</argument>
++                            </arguments>
++                        </configuration>
++                    </execution>
+                     <execution>
+                         <id>initialize</id>
+                         <goals>
+@@ -99,7 +113,6 @@
+                         <configuration>
+                             <executable>npm</executable>
+                             <arguments>
+-                                <argument>run</argument>
+                                 <argument>${npm-publish-type}</argument>
+                             </arguments>
+                         </configuration>
+diff --git a/source-code/scytl-cryptolib/cryptolib-js/package.json b/source-code/scytl-cryptolib/cryptolib-js/package.json
+index 5db6b7e..c392fe3 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js/package.json
++++ b/source-code/scytl-cryptolib/cryptolib-js/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "cryptolib",
+-  "version": "0.0.0",
++  "version": "2.1.54",
+   "author": "Scytl Secure Electronic Voting SA",
+   "dependencies": {
+     "node-forge": "~0.7.1",
+@@ -26,8 +26,7 @@
+     "karma-phantomjs-launcher": "~1.0.4",
+     "xmldom": "~0.1.27"
+   },
+-  "private": true,
+   "publishConfig": {
+-    "registry": "https://nexus.scytl.net/content/repositories/npm-scytl/"
++    "registry": "http://localhost:4873"
+   }
+ }
+diff --git a/source-code/scytl-cryptolib/cryptolib-js/pom.xml b/source-code/scytl-cryptolib/cryptolib-js/pom.xml
+index ee09f92..0fddf50 100644
+--- a/source-code/scytl-cryptolib/cryptolib-js/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-js/pom.xml
+@@ -5,7 +5,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+ 
+     <artifactId>cryptolib-js</artifactId>
+diff --git a/source-code/scytl-cryptolib/cryptolib-mathematical/pom.xml b/source-code/scytl-cryptolib/cryptolib-mathematical/pom.xml
+index d7afddb..89fddf5 100644
+--- a/source-code/scytl-cryptolib/cryptolib-mathematical/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-mathematical/pom.xml
+@@ -5,7 +5,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+ 
+     <artifactId>cryptolib-mathematical</artifactId>
+diff --git a/source-code/scytl-cryptolib/cryptolib-primitives/pom.xml b/source-code/scytl-cryptolib/cryptolib-primitives/pom.xml
+index 2827abc..624155c 100644
+--- a/source-code/scytl-cryptolib/cryptolib-primitives/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-primitives/pom.xml
+@@ -5,7 +5,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-primitives</artifactId>
+ 
+diff --git a/source-code/scytl-cryptolib/cryptolib-proofs/pom.xml b/source-code/scytl-cryptolib/cryptolib-proofs/pom.xml
+index 80cb3d1..f140077 100644
+--- a/source-code/scytl-cryptolib/cryptolib-proofs/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-proofs/pom.xml
+@@ -5,7 +5,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-proofs</artifactId>
+     <name>Proofs</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-scytl-keystore/pom.xml b/source-code/scytl-cryptolib/cryptolib-scytl-keystore/pom.xml
+index cc55cb8..466360f 100644
+--- a/source-code/scytl-cryptolib/cryptolib-scytl-keystore/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-scytl-keystore/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-scytl-keystore</artifactId>
+     <name>Scytl Key Store</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-stores/pom.xml b/source-code/scytl-cryptolib/cryptolib-stores/pom.xml
+index cb82855..4d4b2a6 100644
+--- a/source-code/scytl-cryptolib/cryptolib-stores/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-stores/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-stores</artifactId>
+     
+diff --git a/source-code/scytl-cryptolib/cryptolib-symmetric/pom.xml b/source-code/scytl-cryptolib/cryptolib-symmetric/pom.xml
+index 1f48011..0460a88 100644
+--- a/source-code/scytl-cryptolib/cryptolib-symmetric/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-symmetric/pom.xml
+@@ -4,7 +4,7 @@
+     <parent>
+         <artifactId>cryptolib</artifactId>
+         <groupId>com.scytl.cryptolib</groupId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-symmetric</artifactId>
+     <name>Symmetric</name>
+diff --git a/source-code/scytl-cryptolib/cryptolib-test-tools/pom.xml b/source-code/scytl-cryptolib/cryptolib-test-tools/pom.xml
+index f8141c8..01a278e 100644
+--- a/source-code/scytl-cryptolib/cryptolib-test-tools/pom.xml
++++ b/source-code/scytl-cryptolib/cryptolib-test-tools/pom.xml
+@@ -3,7 +3,7 @@
+     <parent>
+         <groupId>com.scytl.cryptolib</groupId>
+         <artifactId>cryptolib</artifactId>
+-        <version>2.1.5-4</version>
++        <version>2.1.54</version>
+     </parent>
+     <artifactId>cryptolib-test-tools</artifactId>
+ 
+diff --git a/source-code/scytl-cryptolib/pom.xml b/source-code/scytl-cryptolib/pom.xml
+index 01b7736..796cc77 100644
+--- a/source-code/scytl-cryptolib/pom.xml
++++ b/source-code/scytl-cryptolib/pom.xml
+@@ -9,7 +9,7 @@
+     </parent>
+     <groupId>com.scytl.cryptolib</groupId>
+     <artifactId>cryptolib</artifactId>
+-    <version>2.1.5-4</version>
++    <version>2.1.54</version>
+     <packaging>pom</packaging>
+     <name>CryptoLib</name>
+     <description>
+@@ -27,7 +27,7 @@
+         <jackson-annotations.version>2.5.1</jackson-annotations.version>
+         <commons-pool2.version>2.2</commons-pool2.version>
+         <slf4j-api.version>1.7.10</slf4j-api.version>
+-        <npm-publish-type>unpublished</npm-publish-type>
++        <npm-publish-type>publish</npm-publish-type>
+     </properties>
+     <dependencyManagement>
+         <dependencies>
+@@ -287,6 +287,7 @@
+                         <exclude>node_modules/**</exclude>
+                         <exclude>release/**</exclude>
+                     </excludes>
++					<skip>${maven.test.skip.exec}</skip>
+                     <properties>
+                         <currentYear>2018</currentYear>
+                     </properties>
+diff --git a/source-code/scytl-secure-logger/logger/pom.xml b/source-code/scytl-secure-logger/logger/pom.xml
+index 20720e9..549a499 100644
+--- a/source-code/scytl-secure-logger/logger/pom.xml
++++ b/source-code/scytl-secure-logger/logger/pom.xml
+@@ -90,6 +90,7 @@
+             <plugin>
+                 <groupId>org.jacoco</groupId>
+                 <artifactId>jacoco-maven-plugin</artifactId>
++                <version>0.7.3.201502191951</version>
+             </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+diff --git a/source-code/scytl-secure-logger/pom.xml b/source-code/scytl-secure-logger/pom.xml
+index 078cf29..4f19d38 100644
+--- a/source-code/scytl-secure-logger/pom.xml
++++ b/source-code/scytl-secure-logger/pom.xml
+@@ -6,7 +6,7 @@
+     <parent>
+         <groupId>com.scytl</groupId>
+         <artifactId>maven-generic-conf</artifactId>
+-        <version>2.0.0</version>
++        <version>1.5.6</version>
+     </parent>
+ 
+     <groupId>com.scytl.slogger</groupId>
