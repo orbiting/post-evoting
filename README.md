@@ -18,6 +18,7 @@ The [Swiss Post](https://www.post.ch/en/business/a-z-of-subjects/industry-soluti
  1. `git clone https://gitlab.com/swisspost/evoting-solution.git`
  1. `git clone https://github.com/orbiting/post-evoting`
  1. `cd evoting-solution`
+ 1. `git checkout 33a04616 -b build`
  1. `git apply --ignore-whitespace ../post-evoting/post-33a04616.patch`
  1. Follow the instructions in the patched `evoting-solution/README.md`
 
